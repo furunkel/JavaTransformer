@@ -6,11 +6,11 @@ import com.github.javaparser.ast.stmt.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LogStatement extends Transformation<LogStatement.Site> {
+public class InsertComment extends Transformation<InsertComment.Site> {
 
     private final List<String> mStrings;
 
-    public LogStatement(MethodDeclaration methodDeclaration, List<String> strings) {
+    public InsertComment(MethodDeclaration methodDeclaration, List<String> strings) {
         super(methodDeclaration);
         this.mStrings = strings;
     }
@@ -50,14 +50,10 @@ public class LogStatement extends Transformation<LogStatement.Site> {
         for (Statement statement : methodDeclaration.getBody().get().getStatements()) {
             blockStmt.addStatement(statement);
         }
-        int place = (int) (site.getLocation() * blockStmt.getStatements().size());
-        blockStmt.addStatement(place, getLogStatement(site.getString()));
+        int size = blockStmt.getStatements().size();
+        int place = Math.max(0, Math.min((int) (site.getLocation() * size), size - 1));
+        blockStmt.getStatement(place).setLineComment(site.getString());
         methodDeclaration.setBody(blockStmt);
         return methodDeclaration;
-    }
-
-    private Statement getLogStatement(String string) {
-        String logStr = "System.out.println(\"" + string + "\");";
-        return StaticJavaParser.parseStatement(logStr);
     }
 }

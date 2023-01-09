@@ -1,58 +1,39 @@
 import com.github.javaparser.StaticJavaParser;
-import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.PrimitiveType;
 import com.github.javaparser.ast.visitor.TreeVisitor;
-import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.List;
 
-public class BooleanExchange extends VoidVisitorAdapter<Object> {
-    private final Common mCommon;
-    private File mJavaFile = null;
-    private String mSavePath = "";
-    private final ArrayList<Node> mBooleanNodes = new ArrayList<>();
+public class BooleanExchange extends Transformation<Node> {
+    // public void inspectSourceCode(File javaFile) {
+    //     this.mJavaFile = javaFile;
+    //     mSavePath = Common.mRootOutputPath + this.getClass().getSimpleName() + "/";
+    //     CompilationUnit root = Common.getParseUnit(mJavaFile);
+    //     if (root != null) {
+    //         this.visit(root.clone(), null);
+    //     }
+    // }
 
-    BooleanExchange() {
-        //System.out.println("\n[ BooleanExchange ]\n");
-        mCommon = new Common();
-    }
-
-    public void inspectSourceCode(File javaFile) {
-        this.mJavaFile = javaFile;
-        mSavePath = Common.mRootOutputPath + this.getClass().getSimpleName() + "/";
-        CompilationUnit root = mCommon.getParseUnit(mJavaFile);
-        if (root != null) {
-            this.visit(root.clone(), null);
-        }
+    public BooleanExchange(MethodDeclaration methodDeclaration) {
+        super(methodDeclaration);
     }
 
     @Override
-    public void visit(CompilationUnit com, Object obj) {
-        locateBooleanVariables(com);
-        mCommon.applyToPlace(this, mSavePath, com, mJavaFile, mBooleanNodes);
-        super.visit(com, obj);
+    public List<Node> getSites() {
+        return locateBooleanVariables(getMethodDeclaration());
     }
 
-    private void locateBooleanVariables(CompilationUnit com) {
-        new TreeVisitor() {
-            @Override
-            public void process(Node node) {
-                Node booleanNode = getBooleanVariable(node);
-                if (booleanNode != null) {
-                    mBooleanNodes.add(booleanNode);
-                }
-            }
-        }.visitPreOrder(com);
-        //System.out.println("BooleanVariable : " + mBooleanList);
-    }
-
-    public CompilationUnit applyTransformation(CompilationUnit com, Node bolNode) {
+    @Override
+    public MethodDeclaration transform(Node node) {
+        Node bolNode = node;
+        MethodDeclaration methodDeclaration = getMethodDeclaration();
         new TreeVisitor() {
             @Override
             public void process(Node node) {
@@ -101,8 +82,22 @@ public class BooleanExchange extends VoidVisitorAdapter<Object> {
                     }
                 }
             }
-        }.visitPreOrder(com);
-        return com;
+        }.visitPreOrder(methodDeclaration);
+        return methodDeclaration;
+    }
+
+    private ArrayList<Node> locateBooleanVariables(Node node) {
+        ArrayList<Node> booleanNodes = new ArrayList<>();
+        new TreeVisitor() {
+            @Override
+            public void process(Node node) {
+                Node booleanNode = getBooleanVariable(node);
+                if (booleanNode != null) {
+                    booleanNodes.add(booleanNode);
+                }
+            }
+        }.visitPreOrder(node);
+        return booleanNodes;
     }
 
     private String getNotExpStr(Node node) {

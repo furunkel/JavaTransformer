@@ -1,5 +1,5 @@
-import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.BooleanLiteralExpr;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.stmt.BlockStmt;
@@ -7,51 +7,35 @@ import com.github.javaparser.ast.stmt.ForStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.stmt.WhileStmt;
 import com.github.javaparser.ast.visitor.TreeVisitor;
-import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
-import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
-public class LoopExchange extends VoidVisitorAdapter<Object> {
-    private final Common mCommon;
-    private File mJavaFile = null;
-    private String mSavePath = "";
-    private final ArrayList<Node> mLoopNodes = new ArrayList<>();
+public class LoopExchange extends Transformation<Node> {
 
-    LoopExchange() {
-        //System.out.println("\n[ LoopExchange ]\n");
-        mCommon = new Common();
-    }
-
-    public void inspectSourceCode(File javaFile) {
-        this.mJavaFile = javaFile;
-        mSavePath = Common.mRootOutputPath + this.getClass().getSimpleName() + "/";
-        CompilationUnit root = mCommon.getParseUnit(mJavaFile);
-        if (root != null) {
-            this.visit(root.clone(), null);
-        }
+    public LoopExchange(MethodDeclaration methodDeclaration) {
+        super(methodDeclaration);
     }
 
     @Override
-    public void visit(CompilationUnit com, Object obj) {
-        locateLoops(com);
-        mCommon.applyToPlace(this, mSavePath, com, mJavaFile, mLoopNodes);
-        super.visit(com, obj);
+    public List<Node> getSites() {
+        return locateLoops(getMethodDeclaration());
     }
 
-    private void locateLoops(CompilationUnit com) {
+    private List<Node> locateLoops(MethodDeclaration methodDeclaration) {
+        List<Node> sites = new ArrayList<Node>();
         new TreeVisitor() {
             @Override
             public void process(Node node) {
                 if (node instanceof WhileStmt || node instanceof ForStmt) {
-                    mLoopNodes.add(node);
+                    sites.add(node);
                 }
             }
-        }.visitPreOrder(com);
-        //System.out.println("LoopNodes : " + mLoopNodes.size());
+        }.visitPreOrder(methodDeclaration);
+        return sites;
     }
 
-    public CompilationUnit applyTransformation(CompilationUnit com, Node loopNode) {
+    public MethodDeclaration transform(Node loopNode) {
         new TreeVisitor() {
             @Override
             public void process(Node node) {
@@ -76,8 +60,8 @@ public class LoopExchange extends VoidVisitorAdapter<Object> {
                     }
                 }
             }
-        }.visitPreOrder(com);
-        return com;
+        }.visitPreOrder(getMethodDeclaration());
+        return getMethodDeclaration();
     }
 
     private WhileStmt getWhileStmt(Node loopNode) {
