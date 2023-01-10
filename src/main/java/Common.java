@@ -59,18 +59,18 @@ public final class Common {
             //     newCom = ((BooleanExchange) obj).applyTransformation(com, node);
             // } else if (obj instanceof LoopExchange) {
             //     newCom = ((LoopExchange) obj).applyTransformation(com, node);
-            } else if (obj instanceof SwitchToIf) {
-                newCom = ((SwitchToIf) obj).applyTransformation(com, node);
-            } else if (obj instanceof ReorderCondition) {
-                newCom = ((ReorderCondition) obj).applyTransformation(com, node);
-            } else if (obj instanceof PermuteStatement) {
-                newCom = ((PermuteStatement) obj).applyTransformation(com);
+            // } else if (obj instanceof ConvertSwitchToIf) {
+            //     newCom = ((ConvertSwitchToIf) obj).applyTransformation(com, node);
+            // } else if (obj instanceof ReorderCondition) {
+            //     newCom = ((ReorderCondition) obj).applyTransformation(com, node);
+            // } else if (obj instanceof PermuteStatement) {
+            //     newCom = ((PermuteStatement) obj).applyTransformation(com);
             } else if (obj instanceof UnusedStatement) {
                 newCom = ((UnusedStatement) obj).applyTransformation(com);
             // } else if (obj instanceof LogStatement) {
             //     newCom = ((LogStatement) obj).applyTransformation(com);
-            } else if (obj instanceof TryCatch) {
-                newCom = ((TryCatch) obj).applyTransformation(com);
+            // } else if (obj instanceof TryCatch) {
+            //     newCom = ((TryCatch) obj).applyTransformation(com);
             }
         } catch (Exception ex) {
             System.out.println("\n" + "Exception: " + javaFile.getPath());

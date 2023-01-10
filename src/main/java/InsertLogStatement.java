@@ -6,11 +6,11 @@ import com.github.javaparser.ast.stmt.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LogStatement extends Transformation<LogStatement.Site> {
+public class InsertLogStatement extends Transformation<InsertLogStatement.Site> {
 
     private final List<String> mStrings;
 
-    public LogStatement(MethodDeclaration methodDeclaration, List<String> strings) {
+    public InsertLogStatement(MethodDeclaration methodDeclaration, List<String> strings) {
         super(methodDeclaration);
         this.mStrings = strings;
     }

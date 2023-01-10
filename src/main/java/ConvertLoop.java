@@ -11,9 +11,9 @@ import com.github.javaparser.ast.visitor.TreeVisitor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LoopExchange extends Transformation<Node> {
+public class ConvertLoop extends Transformation<Node> {
 
-    public LoopExchange(MethodDeclaration methodDeclaration) {
+    public ConvertLoop(MethodDeclaration methodDeclaration) {
         super(methodDeclaration);
     }
 

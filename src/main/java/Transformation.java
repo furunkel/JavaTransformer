@@ -37,7 +37,7 @@ public abstract class Transformation<T> {
 
     public MethodDeclaration transformRandom(double transformationProbability, Random random) {
         for(T n: mSites) {
-            if(random.nextFloat() > transformationProbability) {
+            if(random.nextFloat() < transformationProbability) {
                 transform(n);
             }
         }

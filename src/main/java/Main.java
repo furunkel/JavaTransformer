@@ -62,10 +62,14 @@ public class Main {
                 List<MethodDeclaration> methodDeclarations = Common.findMethodDeclarations((root));
                 
                 methodDeclarations.stream().forEach((methodDeclaration) -> {
-                    new BooleanExchange(methodDeclaration).prepare().transformRandom(0.5);
-                    new LogStatement(methodDeclaration, Arrays.asList("log", "test")).prepare().transformRandom(0.5);
-                    new InsertComment(methodDeclaration, Arrays.asList("log", "test")).prepare().transformRandom(0.5);
-                    new LoopExchange(methodDeclaration).prepare().transformRandom(0.5);
+                    // new BooleanExchange(methodDeclaration).prepare().transformRandom(0.5);
+                    // new LogStatement(methodDeclaration, Arrays.asList("log", "test")).prepare().transformRandom(0.5);
+                    // new InsertComment(methodDeclaration, Arrays.asList("log", "test")).prepare().transformRandom(0.5);
+                    // new LoopExchange(methodDeclaration).prepare().transformRandom(0.5);
+                    // new PermuteStatement(methodDeclaration).prepare().transformRandom(0.5);
+                    new ReorderCondition(methodDeclaration).prepare().transformRandom(0.5);
+                    new ConvertSwitchToIf(methodDeclaration).prepare().transformAll();
+                    new TryCatch(methodDeclaration).prepare().transformRandom(0.5);
                     System.out.println(methodDeclaration);
                 });
 

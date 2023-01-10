@@ -1,52 +1,36 @@
-import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.BinaryExpr;
 import com.github.javaparser.ast.visitor.TreeVisitor;
-import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
-import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
-public class ReorderCondition extends VoidVisitorAdapter<Object> {
-    private final Common mCommon;
-    private File mJavaFile = null;
-    private String mSavePath = "";
-    private final ArrayList<Node> mOperatorNodes = new ArrayList<>();
+public class ReorderCondition extends Transformation<Node> {
 
-    ReorderCondition() {
-        //System.out.println("\n[ ReorderCondition ]\n");
-        mCommon = new Common();
-    }
-
-    public void inspectSourceCode(File javaFile) {
-        this.mJavaFile = javaFile;
-        mSavePath = Common.mRootOutputPath + this.getClass().getSimpleName() + "/";
-        CompilationUnit root = mCommon.getParseUnit(mJavaFile);
-        if (root != null) {
-            this.visit(root.clone(), null);
-        }
+    public ReorderCondition(MethodDeclaration methodDeclaration) {
+        super(methodDeclaration);
     }
 
     @Override
-    public void visit(CompilationUnit com, Object obj) {
-        locateOperators(com);
-        mCommon.applyToPlace(this, mSavePath, com, mJavaFile, mOperatorNodes);
-        super.visit(com, obj);
+    public List<Node> getSites() {
+        return locateOperators(getMethodDeclaration());
     }
 
-    private void locateOperators(CompilationUnit com) {
+    private List<Node> locateOperators(MethodDeclaration methodDeclaration) {
+        List<Node> operatorNodes = new ArrayList<>();
         new TreeVisitor() {
             @Override
             public void process(Node node) {
                 if (node instanceof BinaryExpr && isAugmentationApplicable(((BinaryExpr) node).getOperator())) {
-                    mOperatorNodes.add(node);
+                    operatorNodes.add(node);
                 }
             }
-        }.visitPreOrder(com);
-        //System.out.println("OperatorNodes : " + mOperatorNodes.size());
+        }.visitPreOrder(methodDeclaration);
+        return operatorNodes;
     }
 
-    public CompilationUnit applyTransformation(CompilationUnit com, Node opNode) {
+    public MethodDeclaration transform(Node opNode) {
         new TreeVisitor() {
             @Override
             public void process(Node node) {
@@ -82,12 +66,14 @@ public class ReorderCondition extends VoidVisitorAdapter<Object> {
                             replNode.setLeft(((BinaryExpr) node).getRight());
                             replNode.setRight(((BinaryExpr) node).getLeft());
                             break;
+                        default:
+                            throw new RuntimeException("unexpected operator");
                     }
                     node.replace(replNode);
                 }
             }
-        }.visitPreOrder(com);
-        return com;
+        }.visitPreOrder(getMethodDeclaration());
+        return getMethodDeclaration();
     }
 
     private boolean isAugmentationApplicable(BinaryExpr.Operator op) {
@@ -103,8 +89,9 @@ public class ReorderCondition extends VoidVisitorAdapter<Object> {
             case PLUS:
             case MULTIPLY:
                 return true;
+            default:
+                return false;
         }
-        return false;
     }
 
 }

@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.List;
 
-public class BooleanExchange extends Transformation<Node> {
+public class NegateBoolean extends Transformation<Node> {
     // public void inspectSourceCode(File javaFile) {
     //     this.mJavaFile = javaFile;
     //     mSavePath = Common.mRootOutputPath + this.getClass().getSimpleName() + "/";
@@ -21,7 +21,7 @@ public class BooleanExchange extends Transformation<Node> {
     //     }
     // }
 
-    public BooleanExchange(MethodDeclaration methodDeclaration) {
+    public NegateBoolean(MethodDeclaration methodDeclaration) {
         super(methodDeclaration);
     }
 
