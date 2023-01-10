@@ -17,17 +17,17 @@ public class InsertLogStatement extends Transformation<InsertLogStatement.Site> 
 
     public static class Site {
         public final String string;
-        public final float location;
+        public final Statement statement;
 
-        public Site(String string, float location) {
+        public Site(String string, Statement statement) {
             this.string = string;
-            this.location = location;
+            this.statement = statement;
         }
         public String getString() {
             return string;
         }
-        public float getLocation() {
-            return location;
+        public Statement getStatement() {
+            return statement;
         }
     }
 
@@ -36,8 +36,8 @@ public class InsertLogStatement extends Transformation<InsertLogStatement.Site> 
         ArrayList<Site> sites = new ArrayList<Site>();
 
         for(String s: mStrings) {
-            for(float i = 0; i <= 1.1; i += 0.1f) {
-                sites.add(new Site(s, i));
+            for(Statement stmt: getMethodStatements()) {
+                sites.add(new Site(s, stmt));
             }
         }
         return sites;
@@ -45,14 +45,8 @@ public class InsertLogStatement extends Transformation<InsertLogStatement.Site> 
 
     public MethodDeclaration transform(Site site) {
         MethodDeclaration methodDeclaration = getMethodDeclaration();
-
-        BlockStmt blockStmt = new BlockStmt();
-        for (Statement statement : methodDeclaration.getBody().get().getStatements()) {
-            blockStmt.addStatement(statement);
-        }
-        int place = (int) (site.getLocation() * blockStmt.getStatements().size());
-        blockStmt.addStatement(place, getLogStatement(site.getString()));
-        methodDeclaration.setBody(blockStmt);
+        System.out.println(methodDeclaration.getBody().get().getStatements().contains(site.getStatement()));
+        methodDeclaration.getBody().get().getStatements().addAfter(getLogStatement(site.getString()), site.getStatement());
         return methodDeclaration;
     }
 

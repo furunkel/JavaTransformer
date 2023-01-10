@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -5,8 +6,9 @@ import java.util.NoSuchElementException;
 import java.util.Random;
 import java.lang.Exception;
 
-
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.stmt.Statement;
+
 
 public abstract class Transformation<T> {
     public static class TransformationsExhaustedException extends Exception {
@@ -59,6 +61,17 @@ public abstract class Transformation<T> {
     public Transformation<T> prepare() {
         mSites = getSites();
         return this;
+    }
+
+    public List<Statement> getMethodStatements() {
+        List<Statement> sites = new ArrayList<>();
+        MethodDeclaration methodDeclaration = getMethodDeclaration();
+        if (methodDeclaration.getBody().isPresent()) {
+            for (Statement statement : methodDeclaration.getBody().get().getStatements()) {
+                sites.add(statement);
+            }
+        }
+        return sites;
     }
 
     public abstract List<T> getSites();

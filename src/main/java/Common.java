@@ -65,8 +65,8 @@ public final class Common {
             //     newCom = ((ReorderCondition) obj).applyTransformation(com, node);
             // } else if (obj instanceof PermuteStatement) {
             //     newCom = ((PermuteStatement) obj).applyTransformation(com);
-            } else if (obj instanceof UnusedStatement) {
-                newCom = ((UnusedStatement) obj).applyTransformation(com);
+            // } else if (obj instanceof UnusedStatement) {
+            //     newCom = ((UnusedStatement) obj).applyTransformation(com);
             // } else if (obj instanceof LogStatement) {
             //     newCom = ((LogStatement) obj).applyTransformation(com);
             // } else if (obj instanceof TryCatch) {
