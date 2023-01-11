@@ -52,9 +52,9 @@ public final class Common {
 
     private static CompilationUnit applyByObj(Object obj, CompilationUnit com, File javaFile, Node node) {
         CompilationUnit newCom = null;
-        try {
-            if (obj instanceof VariableRenaming) {
-                newCom = ((VariableRenaming) obj).applyTransformation(com, node);
+        // try {
+            // if (obj instanceof SwapVariableName) {
+            //     newCom = ((SwapVariableName) obj).applyTransformation(com, node);
             // } else if (obj instanceof BooleanExchange) {
             //     newCom = ((BooleanExchange) obj).applyTransformation(com, node);
             // } else if (obj instanceof LoopExchange) {
@@ -71,11 +71,11 @@ public final class Common {
             //     newCom = ((LogStatement) obj).applyTransformation(com);
             // } else if (obj instanceof TryCatch) {
             //     newCom = ((TryCatch) obj).applyTransformation(com);
-            }
-        } catch (Exception ex) {
-            System.out.println("\n" + "Exception: " + javaFile.getPath());
-            ex.printStackTrace();
-        }
+            // }
+        // } catch (Exception ex) {
+        //     System.out.println("\n" + "Exception: " + javaFile.getPath());
+        //     ex.printStackTrace();
+        // }
         return newCom;
     }
 

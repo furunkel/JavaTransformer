@@ -1,6 +1,7 @@
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.BinaryExpr;
+import com.github.javaparser.ast.expr.StringLiteralExpr;
 import com.github.javaparser.ast.visitor.TreeVisitor;
 
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ public class ReorderCondition extends Transformation<Node> {
         new TreeVisitor() {
             @Override
             public void process(Node node) {
-                if (node instanceof BinaryExpr && isAugmentationApplicable(((BinaryExpr) node).getOperator())) {
+                if (node instanceof BinaryExpr && isAugmentationApplicable(((BinaryExpr) node))) {
                     operatorNodes.add(node);
                 }
             }
@@ -76,7 +77,13 @@ public class ReorderCondition extends Transformation<Node> {
         return getMethodDeclaration();
     }
 
-    private boolean isAugmentationApplicable(BinaryExpr.Operator op) {
+    private boolean notAStringOperation(BinaryExpr opNode) {
+        //FIXME: this is not sufficient. Check if any String variables are involved.
+        return !opNode.findFirst(StringLiteralExpr.class).isPresent();
+    }
+
+    private boolean isAugmentationApplicable(BinaryExpr opNode) {
+        BinaryExpr.Operator op = opNode.getOperator();
         switch (op) {
             case LESS:
             case LESS_EQUALS:
@@ -87,6 +94,7 @@ public class ReorderCondition extends Transformation<Node> {
             case OR:
             case AND:
             case PLUS:
+                return notAStringOperation(opNode);
             case MULTIPLY:
                 return true;
             default:

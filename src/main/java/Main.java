@@ -63,14 +63,15 @@ public class Main {
                 
                 methodDeclarations.stream().forEach((methodDeclaration) -> {
                     // new BooleanExchange(methodDeclaration).prepare().transformRandom(0.5);
-                    new InsertLogStatement(methodDeclaration, Arrays.asList("log", "test")).prepare().transformRandom(0.5);
-                    new InsertComment(methodDeclaration, Arrays.asList("log", "test")).prepare().transformRandom(0.5);
-                    // new LoopExchange(methodDeclaration).prepare().transformRandom(0.5);
-                    // new PermuteStatement(methodDeclaration).prepare().transformRandom(0.5);
+                    // new InsertLogStatement(methodDeclaration, Arrays.asList("log", "test")).prepare().transformRandom(0.5);
+                    // new InsertComment(methodDeclaration, Arrays.asList("log", "test")).prepare().transformRandom(0.5);
+                    // // new LoopExchange(methodDeclaration).prepare().transformRandom(0.5);
+                    // // new PermuteStatement(methodDeclaration).prepare().transformRandom(0.5);
                     new ReorderCondition(methodDeclaration).prepare().transformRandom(0.5);
-                    new ConvertSwitchToIf(methodDeclaration).prepare().transformAll();
-                    new WrapInTryCatch(methodDeclaration).prepare().transformRandom(0.5);
-                    new InsertUnusedStatement(methodDeclaration).prepare().transformRandom(0.5);
+                    // new ConvertSwitchToIf(methodDeclaration).prepare().transformAll();
+                    // new WrapInTryCatch(methodDeclaration).prepare().transformRandom(0.5);
+                    // new InsertUnusedStatement(methodDeclaration).prepare().transformRandom(0.5);
+                    new SwapVariableName(methodDeclaration).prepare().transformRandom(0.5);
                     System.out.println(methodDeclaration);
                 });
 
