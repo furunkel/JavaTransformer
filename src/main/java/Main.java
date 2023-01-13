@@ -67,7 +67,7 @@ public class Main {
                     // new InsertComment(methodDeclaration, Arrays.asList("log", "test")).prepare().transformRandom(0.5);
                     // // new LoopExchange(methodDeclaration).prepare().transformRandom(0.5);
                     // // new PermuteStatement(methodDeclaration).prepare().transformRandom(0.5);
-                    new ReorderCondition(methodDeclaration).prepare().transformRandom(0.5);
+                    new ReorderExpression(methodDeclaration).prepare().transformRandom(0.5);
                     // new ConvertSwitchToIf(methodDeclaration).prepare().transformAll();
                     // new WrapInTryCatch(methodDeclaration).prepare().transformRandom(0.5);
                     // new InsertUnusedStatement(methodDeclaration).prepare().transformRandom(0.5);

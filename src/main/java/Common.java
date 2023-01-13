@@ -3,6 +3,10 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.stmt.*;
+import com.github.javaparser.symbolsolver.JavaSymbolSolver;
+import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
+import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeSolver;
+import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -14,9 +18,22 @@ public final class Common {
     static String mRootOutputPath = "";
 
     public static CompilationUnit getParseUnit(File javaFile) {
+
+        // System.out.println(javaFile.toString());
+        // System.out.println(javaFile.getAbsoluteFile());
+
+        CombinedTypeSolver combinedSolver = new CombinedTypeSolver
+                (
+                        new JavaParserTypeSolver(javaFile.getAbsoluteFile().getParentFile()),
+                        new ReflectionTypeSolver()
+                );
+
+        JavaSymbolSolver symbolSolver = new JavaSymbolSolver(combinedSolver);
+        StaticJavaParser.getParserConfiguration().setSymbolResolver(symbolSolver);
+
         CompilationUnit root = null;
         try {
-            StaticJavaParser.getConfiguration().setAttributeComments(false);
+            StaticJavaParser.getParserConfiguration().setAttributeComments(false);
             String txtCode = new String(Files.readAllBytes(javaFile.toPath()));
             if (!txtCode.startsWith("class")) txtCode = "class T { \n" + txtCode + "\n}";
             root = StaticJavaParser.parse(txtCode);

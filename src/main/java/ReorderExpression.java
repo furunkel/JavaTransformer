@@ -7,9 +7,9 @@ import com.github.javaparser.ast.visitor.TreeVisitor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReorderCondition extends Transformation<Node> {
+public class ReorderExpression extends Transformation<Node> {
 
-    public ReorderCondition(MethodDeclaration methodDeclaration) {
+    public ReorderExpression(MethodDeclaration methodDeclaration) {
         super(methodDeclaration);
     }
 
@@ -79,7 +79,12 @@ public class ReorderCondition extends Transformation<Node> {
 
     private boolean notAStringOperation(BinaryExpr opNode) {
         //FIXME: this is not sufficient. Check if any String variables are involved.
-        return !opNode.findFirst(StringLiteralExpr.class).isPresent();
+        if(opNode.findFirst(StringLiteralExpr.class).isPresent()) return false;
+
+        if(opNode.calculateResolvedType().describe() == "java.lang.String") {
+            return false;
+        }
+        return true;
     }
 
     private boolean isAugmentationApplicable(BinaryExpr opNode) {
@@ -93,6 +98,7 @@ public class ReorderCondition extends Transformation<Node> {
             case NOT_EQUALS:
             case OR:
             case AND:
+                return true;
             case PLUS:
                 return notAStringOperation(opNode);
             case MULTIPLY:
