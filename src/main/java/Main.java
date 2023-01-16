@@ -42,9 +42,6 @@ public class Main {
         }
     }
 
-    private void inspectSourceCode(File javaFile) {
-    }
-
     private static void inspectDataset() {
         String input_dir = mRootInputPath;
         ArrayList<File> javaFiles = new ArrayList<>(
@@ -72,8 +69,11 @@ public class Main {
                     // new WrapInTryCatch(methodDeclaration).prepare().transformRandom(0.5);
                     // new InsertUnusedStatement(methodDeclaration).prepare().transformRandom(0.5);
                     // new SwapVariableName(methodDeclaration).prepare().transformRandom(0.5);
-                    new ConvertAndConditionToNestedIf(methodDeclaration).prepare().transformRandom(0.5);
-                    new SwapIfElseBranches(methodDeclaration).prepare().transformRandom(0.5);
+                    // new ConvertAndConditionToNestedIf(methodDeclaration).prepare().transformRandom(0.5);
+                    // new SwapIfElseBranches(methodDeclaration).prepare().transformRandom(0.5);
+                    new LowerNegation(methodDeclaration).prepare().transformRandom(0.5);
+                    new LowerNegation(methodDeclaration).prepare().transformRandom(0.5);
+                    new LowerNegation(methodDeclaration).prepare().transformRandom(0.5);
                     System.out.println(methodDeclaration);
                 });
 
