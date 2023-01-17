@@ -1,11 +1,13 @@
+package javaaug;
+
 import org.apache.commons.io.FileUtils;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import javaaug.transformations.LowerNegation;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Main {
@@ -54,23 +56,23 @@ public class Main {
         javaFiles.stream().forEach((javaFile) -> {
             try {
 
-        // mSavePath = Common.mRootOutputPath + this.getClass().getSimpleName() + "/";
+        // mSavePath = javaaug.Common.mRootOutputPath + this.getClass().getSimpleName() + "/";
                 CompilationUnit root = Common.getParseUnit(javaFile);
                 List<MethodDeclaration> methodDeclarations = Common.findMethodDeclarations((root));
                 
                 methodDeclarations.stream().forEach((methodDeclaration) -> {
                     // new BooleanExchange(methodDeclaration).prepare().transformRandom(0.5);
-                    // new InsertLogStatement(methodDeclaration, Arrays.asList("log", "test")).prepare().transformRandom(0.5);
-                    // new InsertComment(methodDeclaration, Arrays.asList("log", "test")).prepare().transformRandom(0.5);
+                    // new javaaug.transformations.InsertLogStatement(methodDeclaration, Arrays.asList("log", "test")).prepare().transformRandom(0.5);
+                    // new javaaug.transformations.InsertComment(methodDeclaration, Arrays.asList("log", "test")).prepare().transformRandom(0.5);
                     // // new LoopExchange(methodDeclaration).prepare().transformRandom(0.5);
-                    // // new PermuteStatement(methodDeclaration).prepare().transformRandom(0.5);
-                    // new ReorderExpression(methodDeclaration).prepare().transformRandom(0.5);
-                    // new ConvertSwitchToIf(methodDeclaration).prepare().transformAll();
-                    // new WrapInTryCatch(methodDeclaration).prepare().transformRandom(0.5);
-                    // new InsertUnusedStatement(methodDeclaration).prepare().transformRandom(0.5);
-                    // new SwapVariableName(methodDeclaration).prepare().transformRandom(0.5);
-                    // new ConvertAndConditionToNestedIf(methodDeclaration).prepare().transformRandom(0.5);
-                    // new SwapIfElseBranches(methodDeclaration).prepare().transformRandom(0.5);
+                    // // new javaaug.transformations.PermuteStatement(methodDeclaration).prepare().transformRandom(0.5);
+                    // new javaaug.transformations.ReorderExpression(methodDeclaration).prepare().transformRandom(0.5);
+                    // new javaaug.transformations.ConvertSwitchToIf(methodDeclaration).prepare().transformAll();
+                    // new javaaug.transformations.WrapInTryCatch(methodDeclaration).prepare().transformRandom(0.5);
+                    // new javaaug.transformations.InsertUnusedStatement(methodDeclaration).prepare().transformRandom(0.5);
+                    // new javaaug.transformations.SwapVariableName(methodDeclaration).prepare().transformRandom(0.5);
+                    // new javaaug.transformations.ConvertAndConditionToNestedIf(methodDeclaration).prepare().transformRandom(0.5);
+                    // new javaaug.transformations.SwapIfElseBranches(methodDeclaration).prepare().transformRandom(0.5);
                     new LowerNegation(methodDeclaration).prepare().transformRandom(0.5);
                     new LowerNegation(methodDeclaration).prepare().transformRandom(0.5);
                     new LowerNegation(methodDeclaration).prepare().transformRandom(0.5);
@@ -82,7 +84,7 @@ public class Main {
                 // new LoopExchange().inspectSourceCode(javaFile);
                 // new SwitchToIf().inspectSourceCode(javaFile);
                 // new ReorderCondition().inspectSourceCode(javaFile);
-                // new PermuteStatement().inspectSourceCode(javaFile);
+                // new javaaug.transformations.PermuteStatement().inspectSourceCode(javaFile);
                 // new UnusedStatement().inspectSourceCode(javaFile);
                 // new LogStatement().inspectSourceCode(javaFile);
                 // new TryCatch().inspectSourceCode(javaFile);

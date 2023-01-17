@@ -1,9 +1,12 @@
+package javaaug.transformations;
+
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.EnclosedExpr;
 import com.github.javaparser.ast.expr.UnaryExpr;
 import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.ast.visitor.TreeVisitor;
+import javaaug.Transformation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +17,7 @@ public class SwapIfElseBranches extends Transformation<SwapIfElseBranches.Site> 
         super(methodDeclaration);
     }
 
-    public static class Site {
+    public static class Site extends Transformation.Site {
         private final IfStmt ifStmt;
 
         public Site(IfStmt ifStmt) {
@@ -45,7 +48,7 @@ public class SwapIfElseBranches extends Transformation<SwapIfElseBranches.Site> 
         return sites;
     }
 
-    public MethodDeclaration transform(Site site) {
+    public void transform(Site site) {
         IfStmt ifStmt = site.getIfStmt();
 
         Statement thenStmt = ifStmt.getThenStmt();
@@ -58,7 +61,5 @@ public class SwapIfElseBranches extends Transformation<SwapIfElseBranches.Site> 
         ifStmt.setCondition(negatedCondition);
         ifStmt.setElseStmt(thenStmt);
         ifStmt.setThenStmt(elseStmt);
-
-        return getMethodDeclaration();
     }
 }

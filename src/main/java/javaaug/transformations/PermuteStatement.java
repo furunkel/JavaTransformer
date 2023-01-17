@@ -1,3 +1,5 @@
+package javaaug.transformations;
+
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.MethodCallExpr;
@@ -5,6 +7,8 @@ import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.visitor.TreeVisitor;
+import javaaug.Common;
+import javaaug.Transformation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +65,7 @@ public class PermuteStatement extends Transformation<PermuteStatement.Site> {
         return sites;
     }
 
-    public static class Site {
+    public static class Site extends Transformation.Site {
         public final Statement stmtA;
         public final Statement stmtB;
 
@@ -110,12 +114,11 @@ public class PermuteStatement extends Transformation<PermuteStatement.Site> {
 
     }
 
-    public MethodDeclaration transform(Site site) {
+    public void transform(Site site) {
         Node stmtA = site.getStmtA().clone();
         Node stmtB = site.getStmtB().clone();
         site.getStmtA().replace(stmtB);
         site.getStmtB().replace(stmtA);
-        return getMethodDeclaration();
     }
 
     // private void swapStatementNodes(CompilationUnit com, List<Node>

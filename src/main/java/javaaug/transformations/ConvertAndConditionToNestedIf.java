@@ -1,9 +1,12 @@
+package javaaug.transformations;
+
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.BinaryExpr;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.ast.visitor.TreeVisitor;
+import javaaug.Transformation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +17,7 @@ public class ConvertAndConditionToNestedIf extends Transformation<ConvertAndCond
         super(methodDeclaration);
     }
 
-    public static class Site {
+    public static final class Site extends Transformation.Site {
         private final IfStmt ifStmt;
         private final BinaryExpr binaryExpr;
 
@@ -59,7 +62,7 @@ public class ConvertAndConditionToNestedIf extends Transformation<ConvertAndCond
         return sites;
     }
 
-    public MethodDeclaration transform(Site site) {
+    public void transform(Site site) {
         IfStmt ifStmt = site.getIfStmt();
         BinaryExpr binaryExpr = site.getBinaryExpr();
 
@@ -75,7 +78,5 @@ public class ConvertAndConditionToNestedIf extends Transformation<ConvertAndCond
 
         nestedIf.setThenStmt(thenStmt);
         ifStmt.setThenStmt(nestedIf);
-
-        return getMethodDeclaration();
     }
 }

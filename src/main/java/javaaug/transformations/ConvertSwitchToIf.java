@@ -1,3 +1,5 @@
+package javaaug.transformations;
+
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.MethodDeclaration;
@@ -5,38 +7,40 @@ import com.github.javaparser.ast.expr.BinaryExpr;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.ast.visitor.TreeVisitor;
+import javaaug.Transformation;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class ConvertSwitchToIf extends Transformation<Node> {
+public class ConvertSwitchToIf extends Transformation<Transformation.NodeSite> {
 
     public ConvertSwitchToIf(MethodDeclaration methodDeclaration) {
         super(methodDeclaration);
     }
 
     @Override
-    public List<Node> getSites() {
+    public List<NodeSite> getSites() {
         return locateConditionals(getMethodDeclaration());
     }
 
-    private List<Node> locateConditionals(MethodDeclaration methodDeclaration) {
-        List<Node> switchNodes = new ArrayList<>();
+    private List<NodeSite> locateConditionals(MethodDeclaration methodDeclaration) {
+        List<NodeSite> switchNodes = new ArrayList<>();
 
         new TreeVisitor() {
             @Override
             public void process(Node node) {
                 if (node instanceof SwitchStmt) {
-                    switchNodes.add(node);
+                    switchNodes.add(new NodeSite(node));
                 }
             }
         }.visitPreOrder(methodDeclaration);
         return switchNodes;
     }
 
-    public MethodDeclaration transform(Node switchNode) {
+    public void transform(NodeSite site) {
+        Node switchNode = site.getNode();
         new TreeVisitor() {
             @Override
             public void process(Node node) {
@@ -84,7 +88,6 @@ public class ConvertSwitchToIf extends Transformation<Node> {
                 }
             }
         }.visitPreOrder(getMethodDeclaration());
-        return getMethodDeclaration();
     }
 
     private Expression getBinaryExpr(Node switchNode, SwitchEntry switchEntry) {

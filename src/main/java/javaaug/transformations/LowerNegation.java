@@ -1,3 +1,5 @@
+package javaaug.transformations;
+
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.BinaryExpr;
@@ -5,6 +7,7 @@ import com.github.javaparser.ast.expr.EnclosedExpr;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.UnaryExpr;
 import com.github.javaparser.ast.visitor.TreeVisitor;
+import javaaug.Transformation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +18,7 @@ public class LowerNegation extends Transformation<LowerNegation.Site> {
         super(methodDeclaration);
     }
 
-    public static class Site {
+    public static class Site extends Transformation.Site {
         private final UnaryExpr unaryExpr;
         private final BinaryExpr binaryExpr;
         public UnaryExpr getUnaryExpr() {
@@ -60,7 +63,7 @@ public class LowerNegation extends Transformation<LowerNegation.Site> {
         return sites;
     }
 
-    public MethodDeclaration transform(Site site) {
+    public void transform(Site site) {
         UnaryExpr unaryExpr = site.getUnaryExpr();
         BinaryExpr expression = site.getBinaryExpr();
 
@@ -83,7 +86,6 @@ public class LowerNegation extends Transformation<LowerNegation.Site> {
 
         BinaryExpr invertedExpression = new BinaryExpr(invertedLeft, invertedRight, invertedOperator);
         unaryExpr.replace(invertedExpression);
-        return getMethodDeclaration();
     }
 
     private UnaryExpr negateExpression(Expression expression) {

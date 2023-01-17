@@ -1,3 +1,5 @@
+package javaaug.transformations;
+
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.MethodDeclaration;
@@ -6,16 +8,18 @@ import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.PrimitiveType;
 import com.github.javaparser.ast.visitor.TreeVisitor;
+import javaaug.Transformation;
 
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class NegateBoolean extends Transformation<Node> {
+public class NegateBoolean extends Transformation<Transformation.NodeSite> {
     // public void inspectSourceCode(File javaFile) {
     //     this.mJavaFile = javaFile;
-    //     mSavePath = Common.mRootOutputPath + this.getClass().getSimpleName() + "/";
-    //     CompilationUnit root = Common.getParseUnit(mJavaFile);
+    //     mSavePath = javaaug.Common.mRootOutputPath + this.getClass().getSimpleName() + "/";
+    //     CompilationUnit root = javaaug.Common.getParseUnit(mJavaFile);
     //     if (root != null) {
     //         this.visit(root.clone(), null);
     //     }
@@ -26,12 +30,13 @@ public class NegateBoolean extends Transformation<Node> {
     }
 
     @Override
-    public List<Node> getSites() {
-        return locateBooleanVariables(getMethodDeclaration());
+    public List<NodeSite> getSites() {
+        return locateBooleanVariables(getMethodDeclaration()).stream().map(NodeSite::new).collect(Collectors.toList());
     }
 
     @Override
-    public MethodDeclaration transform(Node node) {
+    public void transform(NodeSite site) {
+        Node node = site.getNode();
         Node bolNode = node;
         MethodDeclaration methodDeclaration = getMethodDeclaration();
         new TreeVisitor() {
@@ -83,7 +88,6 @@ public class NegateBoolean extends Transformation<Node> {
                 }
             }
         }.visitPreOrder(methodDeclaration);
-        return methodDeclaration;
     }
 
     private ArrayList<Node> locateBooleanVariables(Node node) {

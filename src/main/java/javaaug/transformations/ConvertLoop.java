@@ -1,3 +1,5 @@
+package javaaug.transformations;
+
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.BooleanLiteralExpr;
@@ -7,35 +9,38 @@ import com.github.javaparser.ast.stmt.ForStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.stmt.WhileStmt;
 import com.github.javaparser.ast.visitor.TreeVisitor;
+import javaaug.Transformation;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConvertLoop extends Transformation<Node> {
+public class ConvertLoop extends Transformation<Transformation.NodeSite> {
 
     public ConvertLoop(MethodDeclaration methodDeclaration) {
         super(methodDeclaration);
     }
 
     @Override
-    public List<Node> getSites() {
+    public List<NodeSite> getSites() {
         return locateLoops(getMethodDeclaration());
     }
 
-    private List<Node> locateLoops(MethodDeclaration methodDeclaration) {
-        List<Node> sites = new ArrayList<Node>();
+    private List<NodeSite> locateLoops(MethodDeclaration methodDeclaration) {
+        List<NodeSite> sites = new ArrayList<>();
         new TreeVisitor() {
             @Override
             public void process(Node node) {
                 if (node instanceof WhileStmt || node instanceof ForStmt) {
-                    sites.add(node);
+                    sites.add(new NodeSite(node));
                 }
             }
         }.visitPreOrder(methodDeclaration);
         return sites;
     }
 
-    public MethodDeclaration transform(Node loopNode) {
+    @Override
+    public void transform(NodeSite site) {
+        Node loopNode = site.getNode();
         new TreeVisitor() {
             @Override
             public void process(Node node) {
@@ -61,7 +66,6 @@ public class ConvertLoop extends Transformation<Node> {
                 }
             }
         }.visitPreOrder(getMethodDeclaration());
-        return getMethodDeclaration();
     }
 
     private WhileStmt getWhileStmt(Node loopNode) {

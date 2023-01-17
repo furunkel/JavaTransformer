@@ -1,6 +1,8 @@
+package javaaug.transformations;
+
 import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.Statement;
+import javaaug.Transformation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +16,7 @@ public class InsertComment extends Transformation<InsertComment.Site> {
         this.mStrings = strings;
     }
 
-    public static class Site {
+    public static final class Site extends Transformation.Site {
         public final String string;
         public final Statement statement;
 
@@ -42,8 +44,7 @@ public class InsertComment extends Transformation<InsertComment.Site> {
         return sites;
     }
 
-    public MethodDeclaration transform(Site site) {
+    public void transform(Site site) {
         site.getStatement().setLineComment(site.getString());
-        return getMethodDeclaration();
     }
 }

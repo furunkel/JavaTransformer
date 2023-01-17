@@ -1,3 +1,5 @@
+package javaaug;
+
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
@@ -12,6 +14,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class Common {
     static String mRootInputPath = "";
@@ -41,8 +44,12 @@ public final class Common {
         return root;
     }
 
+    private static boolean doTransform(MethodDeclaration methodDeclaration) {
+        return !methodDeclaration.getAnnotationByClass(DoNotTransform.class).isPresent();
+    }
+
     public static List<MethodDeclaration> findMethodDeclarations(CompilationUnit com) {
-        return com.findAll(MethodDeclaration.class);
+        return com.findAll(MethodDeclaration.class).stream().filter(Common::doTransform).collect(Collectors.toList());
 
         // new TreeVisitor() {
         //     @Override
@@ -70,18 +77,18 @@ public final class Common {
     private static CompilationUnit applyByObj(Object obj, CompilationUnit com, File javaFile, Node node) {
         CompilationUnit newCom = null;
         // try {
-            // if (obj instanceof SwapVariableName) {
-            //     newCom = ((SwapVariableName) obj).applyTransformation(com, node);
+            // if (obj instanceof javaaug.transformations.SwapVariableName) {
+            //     newCom = ((javaaug.transformations.SwapVariableName) obj).applyTransformation(com, node);
             // } else if (obj instanceof BooleanExchange) {
             //     newCom = ((BooleanExchange) obj).applyTransformation(com, node);
             // } else if (obj instanceof LoopExchange) {
             //     newCom = ((LoopExchange) obj).applyTransformation(com, node);
-            // } else if (obj instanceof ConvertSwitchToIf) {
-            //     newCom = ((ConvertSwitchToIf) obj).applyTransformation(com, node);
+            // } else if (obj instanceof javaaug.transformations.ConvertSwitchToIf) {
+            //     newCom = ((javaaug.transformations.ConvertSwitchToIf) obj).applyTransformation(com, node);
             // } else if (obj instanceof ReorderCondition) {
             //     newCom = ((ReorderCondition) obj).applyTransformation(com, node);
-            // } else if (obj instanceof PermuteStatement) {
-            //     newCom = ((PermuteStatement) obj).applyTransformation(com);
+            // } else if (obj instanceof javaaug.transformations.PermuteStatement) {
+            //     newCom = ((javaaug.transformations.PermuteStatement) obj).applyTransformation(com);
             // } else if (obj instanceof UnusedStatement) {
             //     newCom = ((UnusedStatement) obj).applyTransformation(com);
             // } else if (obj instanceof LogStatement) {

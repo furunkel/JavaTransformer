@@ -7,7 +7,7 @@
     <property name="dependency.dir" value="target/dependency"/>
     <property name="java.lib.dir" value="${java.home}/lib"/>
     <property name="m2.lib.dir" value="${user.home}/.m2/repository"/>
-    <property name="main-class" value="Main"/>
+    <property name="main-class" value="javaaug.Main"/>
 
     <path id="classpath">
         <fileset dir="${dependency.dir}" includes="*.jar"/>
@@ -30,7 +30,7 @@
         <mkdir dir="${jar.dir}"/>
         <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
             <manifest>
-                <attribute name="Main-Class" value="${main-class}"/>
+                <attribute name="javaaug.Main-Class" value="${main-class}"/>
             </manifest>
         </jar>
     </target>

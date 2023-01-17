@@ -1,3 +1,5 @@
+package javaaug.transformations;
+
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
@@ -7,14 +9,14 @@ import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.visitor.TreeVisitor;
+import javaaug.Transformation;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 
 public class SwapVariableName extends Transformation<SwapVariableName.Site> {
-    public static class Site {
+    public static class Site extends Transformation.Site {
         public final NodeWithSimpleName<? extends Node> variableA;
         public final NodeWithSimpleName<? extends Node> variableB;
         public final BlockStmt blockStmt;
@@ -38,12 +40,12 @@ public class SwapVariableName extends Transformation<SwapVariableName.Site> {
         }
     }
 
-    // public SwapVariableName(MethodDeclaration methodDeclaration, Random random) {
+    // public javaaug.transformations.SwapVariableName(MethodDeclaration methodDeclaration, Random random) {
     //     super(methodDeclaration);
     //     mRandom = random;
     // }
 
-    // public SwapVariableName(MethodDeclaration methodDeclaration) {
+    // public javaaug.transformations.SwapVariableName(MethodDeclaration methodDeclaration) {
     //     this(methodDeclaration, new Random());
     // }
 
@@ -87,13 +89,13 @@ public class SwapVariableName extends Transformation<SwapVariableName.Site> {
     }
 
 
-    public MethodDeclaration transform(Site site) {
+    public void transform(Site site) {
 
         String identifierA = site.getVariableA().getNameAsString();
         String identifierB = site.getVariableB().getNameAsString();
 
         if(identifierA.equals(identifierB)) {
-            return getMethodDeclaration();
+            return;
         }
 
         // System.out.println(identifierA + "->" + identifierB);
@@ -131,9 +133,5 @@ public class SwapVariableName extends Transformation<SwapVariableName.Site> {
         if(site.getVariableB() instanceof Parameter) {
             site.getVariableB().getName().setIdentifier(identifierA);
         }
-
-        // return com;
-
-        return getMethodDeclaration();
     }
 }

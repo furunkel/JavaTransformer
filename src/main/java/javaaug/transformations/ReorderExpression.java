@@ -1,37 +1,39 @@
+package javaaug.transformations;
+
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.BinaryExpr;
 import com.github.javaparser.ast.expr.StringLiteralExpr;
 import com.github.javaparser.ast.visitor.TreeVisitor;
+import javaaug.Transformation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
-public class ReorderExpression extends Transformation<Node> {
+public class ReorderExpression extends Transformation<Transformation.NodeSite> {
 
     public ReorderExpression(MethodDeclaration methodDeclaration) {
         super(methodDeclaration);
     }
 
     @Override
-    public List<Node> getSites() {
-        return locateOperators(getMethodDeclaration());
-    }
-
-    private List<Node> locateOperators(MethodDeclaration methodDeclaration) {
-        List<Node> operatorNodes = new ArrayList<>();
+    public List<NodeSite> getSites() {
+        List<NodeSite> operatorNodes = new ArrayList<>();
         new TreeVisitor() {
             @Override
             public void process(Node node) {
                 if (node instanceof BinaryExpr && isAugmentationApplicable(((BinaryExpr) node))) {
-                    operatorNodes.add(node);
+                    operatorNodes.add(new NodeSite(node));
                 }
             }
-        }.visitPreOrder(methodDeclaration);
+        }.visitPreOrder(getMethodDeclaration());
         return operatorNodes;
     }
 
-    public MethodDeclaration transform(Node opNode) {
+    public void transform(NodeSite site) {
+        Node opNode = site.getNode();
         new TreeVisitor() {
             @Override
             public void process(Node node) {
@@ -74,17 +76,13 @@ public class ReorderExpression extends Transformation<Node> {
                 }
             }
         }.visitPreOrder(getMethodDeclaration());
-        return getMethodDeclaration();
     }
 
     private boolean notAStringOperation(BinaryExpr opNode) {
         //FIXME: this is not sufficient. Check if any String variables are involved.
         if(opNode.findFirst(StringLiteralExpr.class).isPresent()) return false;
 
-        if(opNode.calculateResolvedType().describe() == "java.lang.String") {
-            return false;
-        }
-        return true;
+        return !Objects.equals(opNode.calculateResolvedType().describe(), "java.lang.String");
     }
 
     private boolean isAugmentationApplicable(BinaryExpr opNode) {
@@ -98,11 +96,10 @@ public class ReorderExpression extends Transformation<Node> {
             case NOT_EQUALS:
             case OR:
             case AND:
+            case MULTIPLY:
                 return true;
             case PLUS:
                 return notAStringOperation(opNode);
-            case MULTIPLY:
-                return true;
             default:
                 return false;
         }

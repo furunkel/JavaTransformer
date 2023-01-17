@@ -1,26 +1,30 @@
+package javaaug.transformations;
+
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.stmt.Statement;
+import javaaug.Transformation;
 
 
-public class InsertUnusedStatement extends Transformation<Statement> {
+public class InsertUnusedStatement extends Transformation<Transformation.StatementSite> {
 
     public InsertUnusedStatement(MethodDeclaration methodDeclaration) {
         super(methodDeclaration);
     }
 
     @Override
-    public List<Statement> getSites() {
-        return getMethodStatements();
+    public List<StatementSite> getSites() {
+        return getMethodStatements().stream().map(StatementSite::new).collect(Collectors.toList());
     }
 
-    public MethodDeclaration transform(Statement statement) {
+    public void transform(StatementSite site) {
+        Statement statement = site.getStatement();
         NodeList<Statement> statements = getMethodDeclaration().getBody().get().getStatements();
         statements.addAfter(getUnusedStatement(), statement);
-        return getMethodDeclaration();
     }
 
     private Statement getUnusedStatement() {

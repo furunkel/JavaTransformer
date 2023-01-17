@@ -1,5 +1,5 @@
 # JavaTransformer
-A tool to apply program transformations on Java **(\*.java)** methods for generating semantic-preserving transformed programs.
+A tool to apply program javaaug.transformations on Java **(\*.java)** methods for generating semantic-preserving transformed programs.
 - - -
 
 # Used Version(s):
@@ -37,7 +37,7 @@ $ ant jar
 - BooleanExchange
 - LogStatement
 - LoopExchange
-- PermuteStatement
+- javaaug.transformations.PermuteStatement
 - ReorderCondition
 - SwitchToIf
 - TryCatch
@@ -47,5 +47,5 @@ $ ant jar
 # References:
 
 - Testing Neural Program Analyzers [[Paper](https://arxiv.org/abs/1908.10711)] [[GitHub](https://github.com/mdrafiqulrabin/tnpa-framework)]
-- On the generalizability of Neural Program Models with respect to semantic-preserving program transformations [[Paper](https://arxiv.org/abs/2008.01566)] [[GitHub](https://github.com/mdrafiqulrabin/tnpa-generalizability)]
+- On the generalizability of Neural Program Models with respect to semantic-preserving program javaaug.transformations [[Paper](https://arxiv.org/abs/2008.01566)] [[GitHub](https://github.com/mdrafiqulrabin/tnpa-generalizability)]
 - JavaParser: https://github.com/javaparser/javaparser

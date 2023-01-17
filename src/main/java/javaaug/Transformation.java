@@ -1,17 +1,58 @@
+package javaaug;
+
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Random;
 import java.lang.Exception;
 
+import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.stmt.Statement;
 
 
-public abstract class Transformation<T> {
+public abstract class Transformation<T extends Transformation.Site> {
     public static class TransformationsExhaustedException extends Exception {
+    }
+
+    public static abstract class Site {
+    }
+
+    public static final class NodeSite extends Site {
+        public final Node node;
+
+        public NodeSite(Node node) {
+            this.node = node;
+        }
+
+        public Node getNode() {
+            return node;
+        }
+    }
+
+    public static final class StatementSite extends Site {
+        public final Statement statement;
+
+        public StatementSite(Statement statement) {
+            this.statement = statement;
+        }
+
+        public Statement getStatement() {
+            return statement;
+        }
+    }
+
+    public static final class ValueSite<T> extends Site {
+        public final T value;
+
+        public ValueSite(T value) {
+            this.value = value;
+        }
+
+        public T getValue() {
+            return value;
+        }
     }
 
     private final MethodDeclaration mMethodDeclaration;
@@ -33,26 +74,25 @@ public abstract class Transformation<T> {
         return mMethodDeclaration;
     }
 
-    public MethodDeclaration transformRandom(double transformationProbability) {
-        return transformRandom(transformationProbability, new Random());
+    public void transformRandom(double transformationProbability) {
+        transformRandom(transformationProbability, new Random());
     }
 
-    public MethodDeclaration transformRandom(double transformationProbability, Random random) {
+    public void transformRandom(double transformationProbability, Random random) {
         for(T n: mSites) {
             if(random.nextFloat() < transformationProbability) {
                 transform(n);
             }
         }
-        return mMethodDeclaration;
     }
 
-    public MethodDeclaration transform() throws TransformationsExhaustedException {
+    public void transform() throws TransformationsExhaustedException {
         if(mIter == null) {
             mIter = mSites.iterator();
         }
 
         try {
-            return transform(mIter.next());
+            transform(mIter.next());
         } catch(NoSuchElementException e) {
             throw new TransformationsExhaustedException();
         }
@@ -67,13 +107,11 @@ public abstract class Transformation<T> {
         List<Statement> sites = new ArrayList<>();
         MethodDeclaration methodDeclaration = getMethodDeclaration();
         if (methodDeclaration.getBody().isPresent()) {
-            for (Statement statement : methodDeclaration.getBody().get().getStatements()) {
-                sites.add(statement);
-            }
+            sites.addAll(methodDeclaration.getBody().get().getStatements());
         }
         return sites;
     }
 
     public abstract List<T> getSites();
-    public abstract MethodDeclaration transform(T site);
+    public abstract void transform(T site);
 }
