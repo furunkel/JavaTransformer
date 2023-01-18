@@ -7,7 +7,7 @@ import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.visitor.TreeVisitor;
-import javaaug.Common;
+import javaaug.Utils;
 import javaaug.Transformation;
 
 import java.util.ArrayList;
@@ -93,7 +93,7 @@ public class PermuteStatement extends Transformation<PermuteStatement.Site> {
                 if (node instanceof Statement) {
                     if (node instanceof ExpressionStmt
                             && node.findAll(MethodCallExpr.class).size() == 0
-                            && !Common.isNotPermeableStatement(node)) {
+                            && !Utils.isNotPermeableStatement(node)) {
 
                         innerStatementNodes.add(node);
                     } else {

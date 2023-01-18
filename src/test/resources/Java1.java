@@ -9,35 +9,35 @@ public class Java1 extends javaaug.TestFile {
         float gamma = 6.666666f;
 
         if(a < x) {
-            printLine();
+            mark();
         } else {
-            printLine();
+            mark();
         }
 
         if(!(a < x)) {
-            printLine();
+            mark();
         } else {
-            printLine();
+            mark();
         }
 
         if(x < a && x < b) {
-            printLine();
+            mark();
         }
 
         if(a < alpha) {
-            printLine();
+            mark();
         } else {
-            printLine();
+            mark();
         }
 
         if(!(a < alpha)) {
-            printLine();
+            mark();
         } else {
-            printLine();
+            mark();
         }
 
         if(alpha < a && alpha < b) {
-            printLine();
+            mark();
         }
 
         boolean isA = false;
@@ -46,8 +46,8 @@ public class Java1 extends javaaug.TestFile {
         boolean isD = isA && !isB;
         boolean isE = isA || !isB;
 
-        if(isC) printLine();
-        if(isD) printLine();
-        if(isE) printLine();
+        if(isC) mark();
+        if(isD) mark();
+        if(isE) mark();
     }
 }

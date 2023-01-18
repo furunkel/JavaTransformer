@@ -40,54 +40,47 @@ public class ConvertSwitchToIf extends Transformation<Transformation.NodeSite> {
     }
 
     public void transform(NodeSite site) {
-        Node switchNode = site.getNode();
-        new TreeVisitor() {
-            @Override
-            public void process(Node node) {
-                if (node.equals(switchNode)) {
-                    ArrayList<Object> ifStmts = new ArrayList<>();
-                    NodeList<SwitchEntry> entries = ((SwitchStmt) node).getEntries();
+        Node node = site.getNode();
+        ArrayList<Object> ifStmts = new ArrayList<>();
+        NodeList<SwitchEntry> entries = ((SwitchStmt) node).getEntries();
 
-                    if (entries.size() == 0) {
-                        // empty
-                        ifStmts.add(getIfStmt(node, null, Collections.emptyList()));
-                    } else {
-                        BlockStmt defaultBlockStmt = null;
-                        boolean onlyDefault = entries.size() == 1;
-                        for(int i = 0; i < entries.size(); i++) {
-                            SwitchEntry switchEntry = entries.get(i);
-                            List<SwitchEntry> fallThroughEntries = new ArrayList<>();
+        if (entries.size() == 0) {
+            // empty
+            ifStmts.add(getIfStmt(node, null, Collections.emptyList()));
+        } else {
+            BlockStmt defaultBlockStmt = null;
+            boolean onlyDefault = entries.size() == 1;
+            for (int i = 0; i < entries.size(); i++) {
+                SwitchEntry switchEntry = entries.get(i);
+                List<SwitchEntry> fallThroughEntries = new ArrayList<>();
 
-                            boolean isDefault = switchEntry.getLabels().isEmpty();
-                            if(!isDefault) {
-                                boolean hasBreak = switchEntry.findFirst(BreakStmt.class).isPresent();
-                                if(!hasBreak) {
-                                    for(int j = i + 1; j < entries.size(); j++) {
-                                        SwitchEntry fallthroughEntry = entries.get(j);
-                                        fallThroughEntries.add(fallthroughEntry);
-                                        if(fallthroughEntry.findFirst(BreakStmt.class).isPresent()) break;
-                                    }
-                                }
-                                ifStmts.add(getIfStmt(node, switchEntry, fallThroughEntries));
-                            } else {
-                                if (onlyDefault) {
-                                    // default without cases
-                                    ifStmts.add(getIfStmt(node, switchEntry, Collections.emptyList()));
-                                } else {
-                                    // default with cases
-                                    defaultBlockStmt = getBlockStmt(switchEntry, Collections.emptyList());
-                                }
-                            }
-                        }
-                        if (defaultBlockStmt != null) ifStmts.add(defaultBlockStmt); // default at end with cases
-                        for (int i = 0; i < ifStmts.size() - 1; i++) {
-                            ((IfStmt) ifStmts.get(i)).setElseStmt((Statement) ifStmts.get(i + 1));
+                boolean isDefault = switchEntry.getLabels().isEmpty();
+                if (!isDefault) {
+                    boolean hasBreak = switchEntry.findFirst(BreakStmt.class).isPresent();
+                    if (!hasBreak) {
+                        for (int j = i + 1; j < entries.size(); j++) {
+                            SwitchEntry fallthroughEntry = entries.get(j);
+                            fallThroughEntries.add(fallthroughEntry);
+                            if (fallthroughEntry.findFirst(BreakStmt.class).isPresent()) break;
                         }
                     }
-                    node.replace((IfStmt) ifStmts.get(0));
+                    ifStmts.add(getIfStmt(node, switchEntry, fallThroughEntries));
+                } else {
+                    if (onlyDefault) {
+                        // default without cases
+                        ifStmts.add(getIfStmt(node, switchEntry, Collections.emptyList()));
+                    } else {
+                        // default with cases
+                        defaultBlockStmt = getBlockStmt(switchEntry, Collections.emptyList());
+                    }
                 }
             }
-        }.visitPreOrder(getMethodDeclaration());
+            if (defaultBlockStmt != null) ifStmts.add(defaultBlockStmt); // default at end with cases
+            for (int i = 0; i < ifStmts.size() - 1; i++) {
+                ((IfStmt) ifStmts.get(i)).setElseStmt((Statement) ifStmts.get(i + 1));
+            }
+        }
+        node.replace((IfStmt) ifStmts.get(0));
     }
 
     private Expression getBinaryExpr(Node switchNode, SwitchEntry switchEntry) {
@@ -107,7 +100,7 @@ public class ConvertSwitchToIf extends Transformation<Transformation.NodeSite> {
 
         if (switchEntry != null) {
             Stream<Statement> statements = Stream.concat(switchEntry.getStatements().stream(),
-                           fallthroughEntries.stream().flatMap((entry) -> entry.getStatements().stream() ));
+                    fallthroughEntries.stream().flatMap((entry) -> entry.getStatements().stream()));
             statements.forEach((stmt) -> {
                 if (!(stmt instanceof BreakStmt)) blockStmt.addStatement(stmt);
             });

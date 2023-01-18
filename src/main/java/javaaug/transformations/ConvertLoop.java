@@ -40,32 +40,25 @@ public class ConvertLoop extends Transformation<Transformation.NodeSite> {
 
     @Override
     public void transform(NodeSite site) {
-        Node loopNode = site.getNode();
-        new TreeVisitor() {
-            @Override
-            public void process(Node node) {
-                if (node.equals(loopNode)) {
-                    if (loopNode instanceof WhileStmt) {
-                        ForStmt nodeForStmt = new ForStmt();
-                        nodeForStmt.setCompare(((WhileStmt) node).getCondition());
-                        nodeForStmt.setBody(((WhileStmt) node).getBody());
-                        node.replace(nodeForStmt);
-                    } else if (loopNode instanceof ForStmt) {
-                        if (((ForStmt) node).getInitialization().size() != 0) {
-                            BlockStmt outerBlockStmt = new BlockStmt();
-                            for (Expression exp : ((ForStmt) node).getInitialization()) {
-                                outerBlockStmt.addStatement(exp);
-                            }
-                            WhileStmt nodeWhileStmt = getWhileStmt(node);
-                            outerBlockStmt.addStatement(nodeWhileStmt);
-                            node.replace(outerBlockStmt);
-                        } else {
-                            node.replace(getWhileStmt(node));
-                        }
-                    }
+        Node node = site.getNode();
+        if (node instanceof WhileStmt) {
+            ForStmt nodeForStmt = new ForStmt();
+            nodeForStmt.setCompare(((WhileStmt) node).getCondition());
+            nodeForStmt.setBody(((WhileStmt) node).getBody());
+            node.replace(nodeForStmt);
+        } else if (node instanceof ForStmt) {
+            if (((ForStmt) node).getInitialization().size() != 0) {
+                BlockStmt outerBlockStmt = new BlockStmt();
+                for (Expression exp : ((ForStmt) node).getInitialization()) {
+                    outerBlockStmt.addStatement(exp);
                 }
+                WhileStmt nodeWhileStmt = getWhileStmt(node);
+                outerBlockStmt.addStatement(nodeWhileStmt);
+                node.replace(outerBlockStmt);
+            } else {
+                node.replace(getWhileStmt(node));
             }
-        }.visitPreOrder(getMethodDeclaration());
+        }
     }
 
     private WhileStmt getWhileStmt(Node loopNode) {

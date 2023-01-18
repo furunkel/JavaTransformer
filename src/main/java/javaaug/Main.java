@@ -57,8 +57,8 @@ public class Main {
             try {
 
         // mSavePath = javaaug.Common.mRootOutputPath + this.getClass().getSimpleName() + "/";
-                CompilationUnit root = Common.getParseUnit(javaFile);
-                List<MethodDeclaration> methodDeclarations = Common.findMethodDeclarations((root));
+                CompilationUnit root = Utils.parse(javaFile);
+                List<MethodDeclaration> methodDeclarations = Utils.findTransformableMethodDeclarations((root));
                 
                 methodDeclarations.stream().forEach((methodDeclaration) -> {
                     // new BooleanExchange(methodDeclaration).prepare().transformRandom(0.5);
@@ -66,16 +66,14 @@ public class Main {
                     // new javaaug.transformations.InsertComment(methodDeclaration, Arrays.asList("log", "test")).prepare().transformRandom(0.5);
                     // // new LoopExchange(methodDeclaration).prepare().transformRandom(0.5);
                     // // new javaaug.transformations.PermuteStatement(methodDeclaration).prepare().transformRandom(0.5);
-                    // new javaaug.transformations.ReorderExpression(methodDeclaration).prepare().transformRandom(0.5);
-                    // new javaaug.transformations.ConvertSwitchToIf(methodDeclaration).prepare().transformAll();
+//                     new javaaug.transformations.ReorderExpression(methodDeclaration).prepare().transformRandom(0.5);
+                     new javaaug.transformations.ConvertSwitchToIf(methodDeclaration).prepare().transformAll();
                     // new javaaug.transformations.WrapInTryCatch(methodDeclaration).prepare().transformRandom(0.5);
                     // new javaaug.transformations.InsertUnusedStatement(methodDeclaration).prepare().transformRandom(0.5);
                     // new javaaug.transformations.SwapVariableName(methodDeclaration).prepare().transformRandom(0.5);
                     // new javaaug.transformations.ConvertAndConditionToNestedIf(methodDeclaration).prepare().transformRandom(0.5);
                     // new javaaug.transformations.SwapIfElseBranches(methodDeclaration).prepare().transformRandom(0.5);
-                    new LowerNegation(methodDeclaration).prepare().transformRandom(0.5);
-                    new LowerNegation(methodDeclaration).prepare().transformRandom(0.5);
-                    new LowerNegation(methodDeclaration).prepare().transformRandom(0.5);
+//                    new LowerNegation(methodDeclaration).prepare().transformRandom(0.5);
                     System.out.println(methodDeclaration);
                 });
 

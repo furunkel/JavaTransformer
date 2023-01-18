@@ -36,8 +36,7 @@ public class NegateBoolean extends Transformation<Transformation.NodeSite> {
 
     @Override
     public void transform(NodeSite site) {
-        Node node = site.getNode();
-        Node bolNode = node;
+        Node bolNode = site.getNode();
         MethodDeclaration methodDeclaration = getMethodDeclaration();
         new TreeVisitor() {
             @Override

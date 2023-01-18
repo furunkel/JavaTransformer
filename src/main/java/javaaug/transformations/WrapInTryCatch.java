@@ -6,7 +6,7 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.stmt.*;
-import javaaug.Common;
+import javaaug.Utils;
 import javaaug.Transformation;
 
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ public class WrapInTryCatch extends Transformation<Transformation.StatementSite>
         if (methodDeclaration.getBody().isPresent()) {
             for (Statement statement : methodDeclaration.getBody().get().getStatements()) {
                 boolean flag = true;
-                if (Common.isNotPermeableStatement(statement)
+                if (Utils.isNotPermeableStatement(statement)
                         || statement.findAll(MethodCallExpr.class).size() == 0) {
                     flag = false;
                 } else if (statement instanceof ExpressionStmt) {

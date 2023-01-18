@@ -33,54 +33,47 @@ public class ReorderExpression extends Transformation<Transformation.NodeSite> {
     }
 
     public void transform(NodeSite site) {
-        Node opNode = site.getNode();
-        new TreeVisitor() {
-            @Override
-            public void process(Node node) {
-                if (node.equals(opNode)) {
-                    BinaryExpr replNode = (BinaryExpr) opNode.clone();
-                    switch (((BinaryExpr) node).getOperator()) {
-                        case LESS:
-                            replNode.setOperator(BinaryExpr.Operator.GREATER);
-                            replNode.setLeft(((BinaryExpr) node).getRight());
-                            replNode.setRight(((BinaryExpr) node).getLeft());
-                            break;
-                        case LESS_EQUALS:
-                            replNode.setOperator(BinaryExpr.Operator.GREATER_EQUALS);
-                            replNode.setLeft(((BinaryExpr) node).getRight());
-                            replNode.setRight(((BinaryExpr) node).getLeft());
-                            break;
-                        case GREATER:
-                            replNode.setOperator(BinaryExpr.Operator.LESS);
-                            replNode.setLeft(((BinaryExpr) node).getRight());
-                            replNode.setRight(((BinaryExpr) node).getLeft());
-                            break;
-                        case GREATER_EQUALS:
-                            replNode.setOperator(BinaryExpr.Operator.LESS_EQUALS);
-                            replNode.setLeft(((BinaryExpr) node).getRight());
-                            replNode.setRight(((BinaryExpr) node).getLeft());
-                            break;
-                        case EQUALS:
-                        case NOT_EQUALS:
-                        case OR:
-                        case AND:
-                        case PLUS:
-                        case MULTIPLY:
-                            replNode.setLeft(((BinaryExpr) node).getRight());
-                            replNode.setRight(((BinaryExpr) node).getLeft());
-                            break;
-                        default:
-                            throw new RuntimeException("unexpected operator");
-                    }
-                    node.replace(replNode);
-                }
-            }
-        }.visitPreOrder(getMethodDeclaration());
+        Node node = site.getNode();
+        BinaryExpr replNode = (BinaryExpr) node.clone();
+        switch (((BinaryExpr) node).getOperator()) {
+            case LESS:
+                replNode.setOperator(BinaryExpr.Operator.GREATER);
+                replNode.setLeft(((BinaryExpr) node).getRight());
+                replNode.setRight(((BinaryExpr) node).getLeft());
+                break;
+            case LESS_EQUALS:
+                replNode.setOperator(BinaryExpr.Operator.GREATER_EQUALS);
+                replNode.setLeft(((BinaryExpr) node).getRight());
+                replNode.setRight(((BinaryExpr) node).getLeft());
+                break;
+            case GREATER:
+                replNode.setOperator(BinaryExpr.Operator.LESS);
+                replNode.setLeft(((BinaryExpr) node).getRight());
+                replNode.setRight(((BinaryExpr) node).getLeft());
+                break;
+            case GREATER_EQUALS:
+                replNode.setOperator(BinaryExpr.Operator.LESS_EQUALS);
+                replNode.setLeft(((BinaryExpr) node).getRight());
+                replNode.setRight(((BinaryExpr) node).getLeft());
+                break;
+            case EQUALS:
+            case NOT_EQUALS:
+            case OR:
+            case AND:
+            case PLUS:
+            case MULTIPLY:
+                replNode.setLeft(((BinaryExpr) node).getRight());
+                replNode.setRight(((BinaryExpr) node).getLeft());
+                break;
+            default:
+                throw new RuntimeException("unexpected operator");
+        }
+        node.replace(replNode);
     }
 
     private boolean notAStringOperation(BinaryExpr opNode) {
         //FIXME: this is not sufficient. Check if any String variables are involved.
-        if(opNode.findFirst(StringLiteralExpr.class).isPresent()) return false;
+        if (opNode.findFirst(StringLiteralExpr.class).isPresent()) return false;
 
         return !Objects.equals(opNode.calculateResolvedType().describe(), "java.lang.String");
     }
