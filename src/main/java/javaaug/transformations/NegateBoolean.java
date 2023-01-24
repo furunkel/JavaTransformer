@@ -29,6 +29,12 @@ public class NegateBoolean extends Transformation<Transformation.NodeSite> {
         super(methodDeclaration);
     }
 
+    public static class Builder extends Transformation.Builder<NegateBoolean> {
+      public NegateBoolean build(MethodDeclaration methodDeclaration) {
+        return new NegateBoolean(methodDeclaration);
+      }
+    }
+
     @Override
     public List<NodeSite> getSites() {
         return locateBooleanVariables(getMethodDeclaration()).stream().map(NodeSite::new).collect(Collectors.toList());

@@ -6,11 +6,31 @@ import com.github.javaparser.ast.stmt.Statement;
 import javaaug.Transformation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class InsertLogStatement extends Transformation<InsertLogStatement.Site> {
 
     private final List<String> mStrings;
+
+
+    public static class Builder extends Transformation.Builder<InsertLogStatement> {
+        private static final List<String> DEFAULT_STRINGS = Arrays.asList("log");
+        private List<String> strings = DEFAULT_STRINGS;
+
+        public List<String> getStrings() {
+            return strings;
+        }
+
+        public void setStrings(List<String> strings) {
+            this.strings = strings;
+        }
+
+        @Override
+        public InsertLogStatement build(MethodDeclaration methodDeclaration) {
+            return new InsertLogStatement(methodDeclaration, strings);
+        }
+    }
 
     public InsertLogStatement(MethodDeclaration methodDeclaration, List<String> strings) {
         super(methodDeclaration);

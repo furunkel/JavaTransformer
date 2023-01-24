@@ -18,6 +18,13 @@ public class ReorderExpression extends Transformation<Transformation.NodeSite> {
         super(methodDeclaration);
     }
 
+
+    public static class Builder extends Transformation.Builder<ReorderExpression> {
+      public ReorderExpression build(MethodDeclaration methodDeclaration) {
+        return new ReorderExpression(methodDeclaration);
+      }
+    }
+
     @Override
     public List<NodeSite> getSites() {
         List<NodeSite> operatorNodes = new ArrayList<>();

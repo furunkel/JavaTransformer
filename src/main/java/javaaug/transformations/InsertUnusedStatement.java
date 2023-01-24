@@ -16,6 +16,12 @@ public class InsertUnusedStatement extends Transformation<Transformation.Stateme
         super(methodDeclaration);
     }
 
+    public static class Builder extends Transformation.Builder<InsertUnusedStatement> {
+      public InsertUnusedStatement build(MethodDeclaration methodDeclaration) {
+        return new InsertUnusedStatement(methodDeclaration);
+      }
+    }
+    
     @Override
     public List<StatementSite> getSites() {
         return getMethodStatements().stream().map(StatementSite::new).collect(Collectors.toList());

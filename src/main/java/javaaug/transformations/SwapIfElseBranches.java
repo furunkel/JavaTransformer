@@ -17,6 +17,12 @@ public class SwapIfElseBranches extends Transformation<SwapIfElseBranches.Site> 
         super(methodDeclaration);
     }
 
+    public static class Builder extends Transformation.Builder<SwapIfElseBranches> {
+      public SwapIfElseBranches build(MethodDeclaration methodDeclaration) {
+        return new SwapIfElseBranches(methodDeclaration);
+      }
+    }
+    
     public static class Site extends Transformation.Site {
         private final IfStmt ifStmt;
 

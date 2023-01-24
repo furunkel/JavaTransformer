@@ -1,5 +1,6 @@
 package javaaug;
-public class Java1 extends javaaug.TestFile {
+
+public class TestMethods extends javaaug.TestFile {
     public void test(int a, int b) {
         int x = 100;
         int y = 200;
@@ -8,35 +9,52 @@ public class Java1 extends javaaug.TestFile {
         float beta = 3.134f;
         float gamma = 6.666666f;
 
-        if(a < x) {
+        if (a < x) {
             mark();
         } else {
             mark();
         }
 
-        if(!(a < x)) {
+        if (!(a < x)) {
             mark();
         } else {
             mark();
         }
 
-        if(x < a && x < b) {
+        if (x < a && x < b) {
             mark();
         }
 
-        if(a < alpha) {
+        if (x < a && x < b && !(alpha * z > 100.0)) {
+            mark();
+        }
+
+        if (a < alpha) {
             mark();
         } else {
             mark();
         }
 
-        if(!(a < alpha)) {
+        {
+            if(a > b) {
+                mark();
+            } else {
+                mark();
+            }
+        }
+
+        for(int i = a; i < a + 10; i++) {
+            int u = i + a + 300;
+            mark(u);
+        }
+
+        if (!(a < alpha)) {
             mark();
         } else {
             mark();
         }
 
-        if(alpha < a && alpha < b) {
+        if (alpha < a && alpha < b) {
             mark();
         }
 
@@ -46,8 +64,8 @@ public class Java1 extends javaaug.TestFile {
         boolean isD = isA && !isB;
         boolean isE = isA || !isB;
 
-        if(isC) mark();
-        if(isD) mark();
-        if(isE) mark();
+        if (isC) mark();
+        if (isD) mark();
+        if (isE) mark();
     }
 }

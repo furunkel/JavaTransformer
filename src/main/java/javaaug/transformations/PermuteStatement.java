@@ -19,6 +19,12 @@ public class PermuteStatement extends Transformation<PermuteStatement.Site> {
         super(methodDeclaration);
     }
 
+    public static class Builder extends Transformation.Builder<PermuteStatement> {
+      public PermuteStatement build(MethodDeclaration methodDeclaration) {
+        return new PermuteStatement(methodDeclaration);
+      }
+    }
+    
     @Override
     public List<Site> getSites() {
         List<Site> sites = new ArrayList<>();
@@ -46,7 +52,6 @@ public class PermuteStatement extends Transformation<PermuteStatement.Site> {
                             List<SimpleName> ibIdentifiers = iIdentifiers.stream()
                                     .filter(bIdentifiers::contains).collect(Collectors.toList());
                             if (ibIdentifiers.size() == 0) { // dependency check among i & internal statements
-                                System.out.println("AAAA");
                                 List<SimpleName> jbIdentifiers = jIdentifiers.stream()
                                         .filter(bIdentifiers::contains).collect(Collectors.toList());
                                 if (jbIdentifiers.size() == 0) { // dependency check among j & internal statements

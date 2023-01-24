@@ -20,6 +20,13 @@ public class ConvertSwitchToIf extends Transformation<Transformation.NodeSite> {
         super(methodDeclaration);
     }
 
+    public static class Builder extends Transformation.Builder<ConvertSwitchToIf> {
+        @Override
+        public ConvertSwitchToIf build(MethodDeclaration methodDeclaration) {
+            return new ConvertSwitchToIf(methodDeclaration);
+        }
+    }
+
     @Override
     public List<NodeSite> getSites() {
         return locateConditionals(getMethodDeclaration());

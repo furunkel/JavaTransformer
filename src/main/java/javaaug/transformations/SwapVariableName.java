@@ -11,32 +11,21 @@ import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.visitor.TreeVisitor;
 import javaaug.Transformation;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 
 public class SwapVariableName extends Transformation<SwapVariableName.Site> {
+    private final Random random;
+
     public static class Site extends Transformation.Site {
-        public final NodeWithSimpleName<? extends Node> variableA;
-        public final NodeWithSimpleName<? extends Node> variableB;
-        public final BlockStmt blockStmt;
+        public final Set<String> variableNames;
 
-        public NodeWithSimpleName<? extends Node> getVariableA() {
-            return variableA;
+        public Set<String> getVariableNames() {
+            return variableNames;
         }
 
-        public NodeWithSimpleName<? extends Node> getVariableB() {
-            return variableB;
-        }
-
-        public BlockStmt getBlockStmt() {
-            return blockStmt;
-        }
-        
-        public Site(NodeWithSimpleName<? extends Node> variableA, NodeWithSimpleName<? extends Node> variableB, BlockStmt blockStmt) {
-            this.variableA = variableA;
-            this.variableB = variableB;
-            this.blockStmt = blockStmt;
+        public Site(Set<String> variableNames) {
+            this.variableNames = variableNames;
         }
     }
 
@@ -49,10 +38,27 @@ public class SwapVariableName extends Transformation<SwapVariableName.Site> {
     //     this(methodDeclaration, new Random());
     // }
 
-    public SwapVariableName(MethodDeclaration methodDeclaration) {
+    public SwapVariableName(MethodDeclaration methodDeclaration, Random random) {
         super(methodDeclaration);
+        this.random = random;
     }
 
+    public static class Builder extends Transformation.Builder<SwapVariableName> {
+        private Random random = new Random();
+
+        public Random getRandom() {
+            return random;
+        }
+
+        public void setRandom(Random random) {
+            this.random = random;
+        }
+
+        public SwapVariableName build(MethodDeclaration methodDeclaration) {
+        return new SwapVariableName(methodDeclaration, random);
+      }
+    }
+    
     @Override
     public List<Site> getSites() {
         List<Site> sites = new ArrayList<>();
@@ -64,74 +70,46 @@ public class SwapVariableName extends Transformation<SwapVariableName.Site> {
 
         // List<Node> permutation = Collections.shuffle(variableNodes, mRandom);
 
+        Set<String> variableNames = new HashSet<>();
+
         for(Node variableA: variableNodes) {
             BlockStmt blockA;
             if(variableA instanceof Parameter) {
-                blockA = getMethodDeclaration().getBody().get();
+                variableNames.add(((Parameter) variableA).getNameAsString());
             } else {
-                blockA = variableA.findAncestor(BlockStmt.class).orElse(null);
-            }
-
-            for(Node variableB: variableNodes) {
-                BlockStmt blockB;
-                if(variableB instanceof Parameter) {
-                    blockB = getMethodDeclaration().getBody().get();
-                } else {
-                    blockB = variableB.findAncestor(BlockStmt.class).orElse(null);
-                }
-
-                if(blockA.equals(blockB)) {
-                    sites.add(new Site((NodeWithSimpleName<Node>)variableA, (NodeWithSimpleName<Node>)variableB, blockA));
-                }
+                VariableDeclarator variableDeclarator = (VariableDeclarator) variableA;
+                variableNames.add(variableDeclarator.getNameAsString());
             }
         }
+
+        sites.add(new Site(variableNames));
+
         return sites;
     }
 
 
     public void transform(Site site) {
 
-        String identifierA = site.getVariableA().getNameAsString();
-        String identifierB = site.getVariableB().getNameAsString();
+        Set<String> variableNames = site.getVariableNames();
+        Map<String, String> map = new HashMap<>();
 
-        if(identifierA.equals(identifierB)) {
-            return;
-        }
-
-        // System.out.println(identifierA + "->" + identifierB);
-        // System.out.println(site.getBlockStmt().toString());
-        // System.out.println("\n\n\n\n");
-
-        BlockStmt blockStmt = site.getBlockStmt();
+        List<String> variableNamesList = new ArrayList<>(variableNames);
+        Collections.shuffle(variableNamesList, random);
 
         new TreeVisitor() {
-            public void visitPreOrder(Node node) {
-                process(node);
-                if(node instanceof BlockStmt && !node.equals(blockStmt)) return;
-                new ArrayList<>(node.getChildNodes()).forEach(this::visitPreOrder);
-            }
-            
             @Override
             public void process(Node node) {
                 if (node instanceof SimpleName
                         && !(node.getParentNode().orElse(null) instanceof MethodDeclaration)
                         && !(node.getParentNode().orElse(null) instanceof ClassOrInterfaceDeclaration)) {
                     SimpleName simpleName = (SimpleName) node;
-                    if(simpleName.getIdentifier().equals(identifierA)) {
-                        simpleName.setIdentifier(identifierB);
-                    } else if(simpleName.getIdentifier().equals(identifierB)) {
-                        simpleName.setIdentifier(identifierA);
+                    String name = simpleName.getIdentifier();
+                    if(variableNames.contains(name)) {
+                        String tmpVariableName = map.compute(name, (k,v) -> v == null ? variableNamesList.get(map.size()) : v);
+                        simpleName.setIdentifier(tmpVariableName);
                     }
                 }
             }
-        }.visitPreOrder(blockStmt);
-
-        // parameters are not inside blockStmt so need to be handled separately.
-        if(site.getVariableA() instanceof Parameter) {
-            site.getVariableA().getName().setIdentifier(identifierB);
-        }
-        if(site.getVariableB() instanceof Parameter) {
-            site.getVariableB().getName().setIdentifier(identifierA);
-        }
+        }.visitPreOrder(getMethodDeclaration());
     }
 }

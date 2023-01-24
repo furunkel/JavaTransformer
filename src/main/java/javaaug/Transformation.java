@@ -19,6 +19,10 @@ public abstract class Transformation<T extends Transformation.Site> {
     public static abstract class Site {
     }
 
+    public static abstract class Builder<T extends Transformation> {
+        public abstract T build(MethodDeclaration methodDeclaration);
+    }
+
     public static final class NodeSite extends Site {
         public final Node node;
 
@@ -54,6 +58,7 @@ public abstract class Transformation<T extends Transformation.Site> {
             return value;
         }
     }
+
 
     private final MethodDeclaration mMethodDeclaration;
     private List<T> mSites;

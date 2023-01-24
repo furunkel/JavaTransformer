@@ -20,6 +20,14 @@ public class ConvertLoop extends Transformation<Transformation.NodeSite> {
         super(methodDeclaration);
     }
 
+
+    public static class Builder extends Transformation.Builder<ConvertLoop> {
+        @Override
+        public ConvertLoop build(MethodDeclaration methodDeclaration) {
+            return new ConvertLoop(methodDeclaration);
+        }
+    }
+
     @Override
     public List<NodeSite> getSites() {
         return locateLoops(getMethodDeclaration());

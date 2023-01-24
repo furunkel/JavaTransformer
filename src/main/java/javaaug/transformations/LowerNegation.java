@@ -18,6 +18,12 @@ public class LowerNegation extends Transformation<LowerNegation.Site> {
         super(methodDeclaration);
     }
 
+    public static class Builder extends Transformation.Builder<LowerNegation> {
+      public LowerNegation build(MethodDeclaration methodDeclaration) {
+        return new LowerNegation(methodDeclaration);
+      }
+    }
+    
     public static class Site extends Transformation.Site {
         private final UnaryExpr unaryExpr;
         private final BinaryExpr binaryExpr;
@@ -122,7 +128,7 @@ public class LowerNegation extends Transformation<LowerNegation.Site> {
         switch(operator) {
             case AND: return BinaryExpr.Operator.OR;
             case OR: return BinaryExpr.Operator.AND;
-            case LESS_EQUALS: return BinaryExpr.Operator.EQUALS;
+            case LESS_EQUALS: return BinaryExpr.Operator.GREATER;
             case LESS: return BinaryExpr.Operator.GREATER_EQUALS;
             case GREATER_EQUALS: return BinaryExpr.Operator.LESS;
             case GREATER: return BinaryExpr.Operator.LESS_EQUALS;

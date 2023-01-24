@@ -13,6 +13,13 @@ import java.util.List;
 
 public class ConvertAndConditionToNestedIf extends Transformation<ConvertAndConditionToNestedIf.Site> {
 
+    public static class Builder extends Transformation.Builder<ConvertAndConditionToNestedIf> {
+        @Override
+        public ConvertAndConditionToNestedIf build(MethodDeclaration methodDeclaration) {
+            return new ConvertAndConditionToNestedIf(methodDeclaration);
+        }
+    }
+
     public ConvertAndConditionToNestedIf(MethodDeclaration methodDeclaration) {
         super(methodDeclaration);
     }

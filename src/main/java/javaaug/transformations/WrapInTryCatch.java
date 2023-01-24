@@ -19,6 +19,12 @@ public class WrapInTryCatch extends Transformation<Transformation.StatementSite>
         super(methodDeclaration);
     }
 
+    public static class Builder extends Transformation.Builder<WrapInTryCatch> {
+      public WrapInTryCatch build(MethodDeclaration methodDeclaration) {
+        return new WrapInTryCatch(methodDeclaration);
+      }
+    }
+    
     @Override
     public List<StatementSite> getSites() {
         MethodDeclaration methodDeclaration = getMethodDeclaration();
