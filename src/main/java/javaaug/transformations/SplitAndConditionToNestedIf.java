@@ -11,16 +11,16 @@ import javaaug.Transformation;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConvertAndConditionToNestedIf extends Transformation<ConvertAndConditionToNestedIf.Site> {
+public class SplitAndConditionToNestedIf extends Transformation<SplitAndConditionToNestedIf.Site> {
 
-    public static class Builder extends Transformation.Builder<ConvertAndConditionToNestedIf> {
+    public static class Builder extends Transformation.Builder<SplitAndConditionToNestedIf> {
         @Override
-        public ConvertAndConditionToNestedIf build(MethodDeclaration methodDeclaration) {
-            return new ConvertAndConditionToNestedIf(methodDeclaration);
+        public SplitAndConditionToNestedIf build(MethodDeclaration methodDeclaration) {
+            return new SplitAndConditionToNestedIf(methodDeclaration);
         }
     }
 
-    public ConvertAndConditionToNestedIf(MethodDeclaration methodDeclaration) {
+    public SplitAndConditionToNestedIf(MethodDeclaration methodDeclaration) {
         super(methodDeclaration);
     }
 

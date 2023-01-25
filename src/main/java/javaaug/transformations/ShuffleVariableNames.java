@@ -6,7 +6,6 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.SimpleName;
-import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.visitor.TreeVisitor;
 import javaaug.Transformation;
@@ -14,7 +13,7 @@ import javaaug.Transformation;
 import java.util.*;
 
 
-public class SwapVariableName extends Transformation<SwapVariableName.Site> {
+public class ShuffleVariableNames extends Transformation<ShuffleVariableNames.Site> {
     private final Random random;
 
     public static class Site extends Transformation.Site {
@@ -38,12 +37,12 @@ public class SwapVariableName extends Transformation<SwapVariableName.Site> {
     //     this(methodDeclaration, new Random());
     // }
 
-    public SwapVariableName(MethodDeclaration methodDeclaration, Random random) {
+    public ShuffleVariableNames(MethodDeclaration methodDeclaration, Random random) {
         super(methodDeclaration);
         this.random = random;
     }
 
-    public static class Builder extends Transformation.Builder<SwapVariableName> {
+    public static class Builder extends Transformation.Builder<ShuffleVariableNames> {
         private Random random = new Random();
 
         public Random getRandom() {
@@ -54,8 +53,8 @@ public class SwapVariableName extends Transformation<SwapVariableName.Site> {
             this.random = random;
         }
 
-        public SwapVariableName build(MethodDeclaration methodDeclaration) {
-        return new SwapVariableName(methodDeclaration, random);
+        public ShuffleVariableNames build(MethodDeclaration methodDeclaration) {
+        return new ShuffleVariableNames(methodDeclaration, random);
       }
     }
     

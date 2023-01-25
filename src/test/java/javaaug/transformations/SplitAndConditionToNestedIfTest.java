@@ -6,12 +6,12 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
-public class ConvertAndConditionToNestedIfTest extends TransformationTest {
+public class SplitAndConditionToNestedIfTest extends TransformationTest {
 
     @Test
     public void test() throws Exception {
-        MethodDeclaration methodDeclaration = getTestMethod("test", "ConvertAndConditionToNestedIf.java");
-        ConvertAndConditionToNestedIf t = new ConvertAndConditionToNestedIf(methodDeclaration);
+        MethodDeclaration methodDeclaration = getTestMethod("test", "SplitAndConditionToNestedIf.java");
+        SplitAndConditionToNestedIf t = new SplitAndConditionToNestedIf(methodDeclaration);
         assertStatementEquals("{if(a<b&&b<100){println(\"ok\");}}", methodDeclaration.getBody().get());
         t.prepare().transform();
         assertStatementEquals("{if(a<b)if(b<100){println(\"ok\");}}", methodDeclaration.getBody().get());
@@ -19,7 +19,7 @@ public class ConvertAndConditionToNestedIfTest extends TransformationTest {
 
     @Test
     public void testSpectrum() throws Exception {
-        testSpectrum("test", Arrays.asList(new ConvertAndConditionToNestedIf.Builder()), (before, after) -> {
+        testSpectrum("test", Arrays.asList(new SplitAndConditionToNestedIf.Builder()), (before, after) -> {
         });
     }
 }

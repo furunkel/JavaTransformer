@@ -8,10 +8,10 @@ import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SwapVariableNameTest extends TransformationTest {
+public class ShuffleVariableNamesTest extends TransformationTest {
     @Test
     public void testSpectrum() throws Exception {
-        testSpectrum("test", Arrays.asList(new SwapVariableName.Builder()), (before, after) -> {
+        testSpectrum("test", Arrays.asList(new ShuffleVariableNames.Builder()), (before, after) -> {
             System.out.println(before.toString());
             System.out.println(after.toString());
         });
@@ -19,7 +19,7 @@ public class SwapVariableNameTest extends TransformationTest {
 
     @Test
     public void testSpectrum2() throws Exception {
-        testSpectrum("test", Arrays.asList(new SwapIfElseBranches.Builder(), new LowerNegation.Builder(), new SwapVariableName.Builder()), (before, after) -> {
+        testSpectrum("test", Arrays.asList(new SwapIfElseBranches.Builder(), new LowerNegation.Builder(), new ShuffleVariableNames.Builder()), (before, after) -> {
             System.out.println(before.toString());
             System.out.println(after.toString());
         });

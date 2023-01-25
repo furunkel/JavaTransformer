@@ -1,9 +1,5 @@
 package javaaug;
 
-import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.stmt.TryStmt;
-import javaaug.Transformation;
-import javaaug.TransformationTest;
 import javaaug.transformations.*;
 import org.junit.jupiter.api.Test;
 
@@ -27,8 +23,8 @@ public class AllCombinedTest extends TransformationTest {
                 new InsertComment.Builder(),
                 new ConvertSwitchToIf.Builder(),
                 new ConvertLoop.Builder(),
-                new ConvertAndConditionToNestedIf.Builder(),
-                new SwapVariableName.Builder(),
+                new SplitAndConditionToNestedIf.Builder(),
+                new ShuffleVariableNames.Builder(),
                 new WrapInTryCatch.Builder()
         );
         testSpectrum("test", "Spectrum.java", transformations, (before, after) -> {
