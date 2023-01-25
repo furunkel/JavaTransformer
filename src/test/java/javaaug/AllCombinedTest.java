@@ -18,17 +18,16 @@ public class AllCombinedTest extends TransformationTest {
     @Test
     public void testSpectrum() throws Exception {
         List<Transformation.Builder> transformations = Arrays.asList(
-//                new WrapInTryCatch.Builder(),
-//                new SwapIfElseBranches.Builder(),
-//                new ReorderExpression.Builder(),
-//                new PermuteStatement.Builder(),
-////                new LowerNegation.Builder(),
-//                new InsertUnusedStatement.Builder(),
-//                new InsertLogStatement.Builder(),
-//                new InsertComment.Builder(),
-//                new ConvertSwitchToIf.Builder(),
-//                new ConvertLoop.Builder(),
-//                new ConvertAndConditionToNestedIf.Builder(),
+                new SwapIfElseBranches.Builder(),
+                new ReorderExpression.Builder(),
+                new PermuteStatement.Builder(),
+                new LowerNegation.Builder(),
+                new InsertUnusedStatement.Builder(),
+                new InsertLogStatement.Builder(),
+                new InsertComment.Builder(),
+                new ConvertSwitchToIf.Builder(),
+                new ConvertLoop.Builder(),
+                new ConvertAndConditionToNestedIf.Builder(),
                 new SwapVariableName.Builder(),
                 new WrapInTryCatch.Builder()
         );

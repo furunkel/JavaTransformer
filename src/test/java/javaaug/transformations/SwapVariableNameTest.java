@@ -16,4 +16,12 @@ public class SwapVariableNameTest extends TransformationTest {
             System.out.println(after.toString());
         });
     }
+
+    @Test
+    public void testSpectrum2() throws Exception {
+        testSpectrum("test", Arrays.asList(new SwapIfElseBranches.Builder(), new LowerNegation.Builder(), new SwapVariableName.Builder()), (before, after) -> {
+            System.out.println(before.toString());
+            System.out.println(after.toString());
+        });
+    }
 }

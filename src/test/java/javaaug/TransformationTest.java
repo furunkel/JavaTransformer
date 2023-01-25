@@ -28,13 +28,13 @@ public class TransformationTest {
         }).findFirst().get();
 
         List<Transformation> transformations = transformationBuilders.stream().map(b -> b.build(methodDeclaration)).collect(Collectors.toList());
-        for (int i = 0; i < 5; i++) {
-//            Collections.shuffle(transformations);
+        Collections.shuffle(transformations);
+//        for (int i = 0; i < 5; i++) {
             for (Transformation transformation : transformations) {
                 transformation.prepare();
                 transformation.transformRandom(transformationProbability);
             }
-        }
+//        }
 
 //        cu.findFirst(ClassOrInterfaceDeclaration.class).ifPresent(declaration -> {
 //            declaration.setName(className);
@@ -84,6 +84,7 @@ public class TransformationTest {
         TestFile originalTestFile = getTestFile(cu, "Java1");
 
         int numPermutations = Math.min(100, numPermutations(transformationBuilders.size()));
+        System.out.println(numPermutations + "MMMM");
         Random random = new Random();
         for (int j = 0; j < numPermutations; j++) {
             String className = "Java" + (j + 2);

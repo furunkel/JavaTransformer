@@ -80,14 +80,14 @@ public class LowerNegation extends Transformation<LowerNegation.Site> {
         if(invertOperands) {
             invertedLeft = negateExpression(expression.getLeft());
         } else {
-            invertedLeft = expression.getLeft();
+            invertedLeft = expression.getLeft().clone();
         }
 
         Expression invertedRight;
         if(invertOperands) {
             invertedRight = negateExpression(expression.getRight());
         } else {
-            invertedRight = expression.getRight();
+            invertedRight = expression.getRight().clone();
         }
 
         BinaryExpr invertedExpression = new BinaryExpr(invertedLeft, invertedRight, invertedOperator);
@@ -95,7 +95,7 @@ public class LowerNegation extends Transformation<LowerNegation.Site> {
     }
 
     private UnaryExpr negateExpression(Expression expression) {
-        return new UnaryExpr(new EnclosedExpr(expression), UnaryExpr.Operator.LOGICAL_COMPLEMENT);
+        return new UnaryExpr(new EnclosedExpr(expression.clone()), UnaryExpr.Operator.LOGICAL_COMPLEMENT);
     }
 
     private boolean invertibleOperator(BinaryExpr.Operator operator) {

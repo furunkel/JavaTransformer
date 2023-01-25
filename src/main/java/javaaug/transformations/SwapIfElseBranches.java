@@ -60,9 +60,10 @@ public class SwapIfElseBranches extends Transformation<SwapIfElseBranches.Site> 
         Statement thenStmt = ifStmt.getThenStmt();
         Statement elseStmt = ifStmt.getElseStmt().get();
 
-        UnaryExpr negatedCondition = new UnaryExpr(new EnclosedExpr(ifStmt.getCondition()), UnaryExpr.Operator.LOGICAL_COMPLEMENT);
+        UnaryExpr negatedCondition = new UnaryExpr(new EnclosedExpr(ifStmt.getCondition().clone()), UnaryExpr.Operator.LOGICAL_COMPLEMENT);
         System.out.println(ifStmt.getCondition());
         System.out.println(negatedCondition);
+        System.out.println(ifStmt.getCondition().getClass() + "\n\n");
 
         ifStmt.setCondition(negatedCondition);
         ifStmt.setElseStmt(thenStmt);

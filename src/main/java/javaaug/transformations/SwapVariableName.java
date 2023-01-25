@@ -91,12 +91,15 @@ public class SwapVariableName extends Transformation<SwapVariableName.Site> {
     public void transform(Site site) {
 
         Set<String> variableNames = site.getVariableNames();
-        Map<String, String> map = new HashMap<>();
-
         List<String> variableNamesList = new ArrayList<>(variableNames);
-        Collections.shuffle(variableNamesList, random);
+        List<String> shuffledVariableNamesList = new ArrayList<>(variableNamesList);
+        Collections.shuffle(shuffledVariableNamesList, random);
+        Map<String, String> map = new HashMap<>();
+        for(int i = 0; i < variableNamesList.size(); i++) {
+            map.put(variableNamesList.get(i), shuffledVariableNamesList.get(i));
+        }
 
-        new TreeVisitor() {
+        TreeVisitor treeVisitor = new TreeVisitor() {
             @Override
             public void process(Node node) {
                 if (node instanceof SimpleName
@@ -104,12 +107,30 @@ public class SwapVariableName extends Transformation<SwapVariableName.Site> {
                         && !(node.getParentNode().orElse(null) instanceof ClassOrInterfaceDeclaration)) {
                     SimpleName simpleName = (SimpleName) node;
                     String name = simpleName.getIdentifier();
-                    if(variableNames.contains(name)) {
-                        String tmpVariableName = map.compute(name, (k,v) -> v == null ? variableNamesList.get(map.size()) : v);
-                        simpleName.setIdentifier(tmpVariableName);
+                    String newVariableName = map.getOrDefault(name, null);
+                    if(newVariableName != null) {
+                        simpleName.setIdentifier(newVariableName);
                     }
+                } else if(node instanceof SimpleName) {
+                    System.out.println("Not renaming " + ((SimpleName) node).getIdentifier());
                 }
             }
-        }.visitPreOrder(getMethodDeclaration());
+        };
+
+        treeVisitor.visitPreOrder(getMethodDeclaration());
+//        for(Parameter parameter: getMethodDeclaration().getParameters()) {
+//            System.out.println(parameter.getNameAsString() + " " + map.get(parameter.getNameAsString()));
+//            treeVisitor.process(parameter.getName());
+//        }
+
+        System.out.println(map);
+
+//        if(site.getVariableA() instanceof Parameter) {
+//            site.getVariableA().getName().setIdentifier(identifierB);
+//        }
+//        if(site.getVariableB() instanceof Parameter) {
+//            site.getVariableB().getName().setIdentifier(identifierA);
+//        }
+
     }
 }
